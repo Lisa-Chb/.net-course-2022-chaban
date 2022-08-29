@@ -2,7 +2,7 @@
 
 namespace Services
 {
-    public class BankService
+    public class BankServices
     {
         public int CalculateOwnerSalary(int ownerCount, float bankProfit, float bankExpenses)
         {
