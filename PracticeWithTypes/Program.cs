@@ -10,81 +10,83 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Faker<Employee> generatorEmployee = TestDataGenerator.EmployeeGenerator();
+        TestDataGenerator testDataGenerator = new TestDataGenerator();
+        Faker<Employee> generatorEmployee = testDataGenerator.EmployeeGenerator();
         List<Employee> employees = generatorEmployee.Generate(1000);
 
-        Faker<Client> generatorClient = TestDataGenerator.ClientGenerator();
+        Faker<Client> generatorClient = testDataGenerator.ClientGenerator();
         List<Client> clients = generatorClient.Generate(1000);
         Client testClient = new Client();
         testClient.Phone = "077863694";
         clients.Add(testClient);
 
-        Dictionary<string, Client> clientsDict = TestDataGenerator.DictionaryGenerator(clients);
+        Dictionary<string, Client> clientsDict = testDataGenerator.DictionaryGenerator(clients);
 
         Stopwatch stopwatch = new Stopwatch();
+        Program program = new Program();
 
         //Задание а
         stopwatch.Start();
-       Client client6 =  ClientSearchList(clients, "077863694");
+       Client client6 =  program.ClientSearchList(clients, "077863694");
         stopwatch.Stop();
 
-        PrintTime(stopwatch, "ClientSearchlist");
+        program.PrintTime(stopwatch, "ClientSearchlist");
 
         //Задание б      
         stopwatch.Start();
-        Client client7 = ClientSearchDictionary(clientsDict, "077863694");
+        Client client7 = program.ClientSearchDictionary(clientsDict, "077863694");
         stopwatch.Stop();
-        PrintTime(stopwatch, "ClientSearchDictionary");
+        program.PrintTime(stopwatch, "ClientSearchDictionary");
 
         //Задание в
         stopwatch.Start();
-       List<Client> clients3 =  ClientSearchByAge(clients, 45);
+       List<Client> clients3 = program.ClientSearchByAge(clients, 45);
         stopwatch.Stop();
-        PrintTime(stopwatch, "ClientSearchByAge");
+        program.PrintTime(stopwatch, "ClientSearchByAge");
 
         //Задание г
         stopwatch.Start();
-       Employee client4 =  SearchMinSalary(employees);
+       Employee client4 =  program.SearchMinSalary(employees);
         stopwatch.Stop();
-        PrintTime(stopwatch, "SearchMinSalary");
+        program.PrintTime(stopwatch, "SearchMinSalary");
 
         //Задание д 1
         stopwatch.Start();
-        Client lastClient = LastClientWithFirstOrDefault(clientsDict, "077863694");
+        Client lastClient = program.LastClientWithFirstOrDefault(clientsDict, "077863694");
         stopwatch.Stop();
-        PrintTime(stopwatch, "LastClientWithFirstOrDefault");
+        program.PrintTime(stopwatch, "LastClientWithFirstOrDefault");
 
         //Задание д 2
         stopwatch.Start();
-        Client lastClient2 = LastClientWithKey(clientsDict, "077863694");
+        Client lastClient2 = program.LastClientWithKey(clientsDict, "077863694");
         stopwatch.Stop();
-        PrintTime(stopwatch, "LastClientWithKey");
+        program.PrintTime(stopwatch, "LastClientWithKey");
 
     }
 
-    public static void PrintTime(Stopwatch stopwatch, string nameOfMethod)
+    public void PrintTime(Stopwatch stopwatch, string nameOfMethod)
     {
         Console.WriteLine($" Runtime {nameOfMethod}" + " " + stopwatch.Elapsed);
     }
 
-    public static Client ClientSearchDictionary(Dictionary<string, Client> clientsDictionary, string phone)
+    public Client ClientSearchDictionary(Dictionary<string, Client> clientsDictionary, string phone)
     {
         return clientsDictionary[phone];
     }
 
-    public static Client ClientSearchList(List<Client> clients, string phone)
+    public Client ClientSearchList(List<Client> clients, string phone)
     {
         var client = clients.FirstOrDefault(p => p.Phone == phone);
         return client;
     }
 
-    public static List<Client> ClientSearchByAge(List<Client> clients, int age)
+    public List<Client> ClientSearchByAge(List<Client> clients, int age)
     {
         var clientByAge = clients.FindAll(p => p.Age <= age);
         return clientByAge;
     }
 
-    public static Employee SearchMinSalary(List<Employee> employees)
+    public Employee SearchMinSalary(List<Employee> employees)
     {
        double minSalary = employees.Min(a => a.Salary);
        return employees.FirstOrDefault(a => a.Salary == minSalary);
@@ -92,13 +94,13 @@ public class Program
         
     }
 
-    public static Client LastClientWithFirstOrDefault(Dictionary<string, Client> clients, string phone)
+    public Client LastClientWithFirstOrDefault(Dictionary<string, Client> clients, string phone)
     {
         var lastClient = clients.FirstOrDefault(p => p.Key == phone).Value;
         return lastClient;
     }
 
-    public static Client LastClientWithKey(Dictionary<string, Client> clients, string phone)
+    public Client LastClientWithKey(Dictionary<string, Client> clients, string phone)
     {
         return clients[phone];
     }
