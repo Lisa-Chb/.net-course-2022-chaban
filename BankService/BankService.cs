@@ -2,7 +2,7 @@
 
 namespace Services
 {
-    public class BankServices
+    public class BankService
     {
         public int CalculateOwnerSalary(int ownerCount, float bankProfit, float bankExpenses)
         {
@@ -11,6 +11,7 @@ namespace Services
 
         public  Employee ClientToEmployee(Client client)
         {
+
             Employee employee = new Employee()
             {
                 FirstName = client.FirstName,
