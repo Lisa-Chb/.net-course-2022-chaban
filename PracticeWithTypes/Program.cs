@@ -22,71 +22,70 @@ public class Program
 
         Dictionary<string, Client> clientsDict = testDataGenerator.DictionaryGenerator(clients);
 
-        Stopwatch stopwatch = new Stopwatch();
-        Program program = new Program();
+        Stopwatch stopwatch = new Stopwatch();       
 
         //Задание а
         stopwatch.Start();
-       Client client6 =  program.ClientSearchList(clients, "077863694");
+       Client client6 = ClientSearchList(clients, "077863694");
         stopwatch.Stop();
 
-        program.PrintTime(stopwatch, "ClientSearchlist");
+        PrintTime(stopwatch, "ClientSearchlist");
 
         //Задание б      
         stopwatch.Start();
-        Client client7 = program.ClientSearchDictionary(clientsDict, "077863694");
+        Client client7 = ClientSearchDictionary(clientsDict, "077863694");
         stopwatch.Stop();
-        program.PrintTime(stopwatch, "ClientSearchDictionary");
+        PrintTime(stopwatch, "ClientSearchDictionary");
 
         //Задание в
         stopwatch.Start();
-       List<Client> clients3 = program.ClientSearchByAge(clients, 45);
+       List<Client> clients3 = ClientSearchByAge(clients, 45);
         stopwatch.Stop();
-        program.PrintTime(stopwatch, "ClientSearchByAge");
+        PrintTime(stopwatch, "ClientSearchByAge");
 
         //Задание г
         stopwatch.Start();
-       Employee client4 =  program.SearchMinSalary(employees);
+       Employee client4 =  SearchMinSalary(employees);
         stopwatch.Stop();
-        program.PrintTime(stopwatch, "SearchMinSalary");
+        PrintTime(stopwatch, "SearchMinSalary");
 
         //Задание д 1
         stopwatch.Start();
-        Client lastClient = program.LastClientWithFirstOrDefault(clientsDict, "077863694");
+        Client lastClient = LastClientWithFirstOrDefault(clientsDict, "077863694");
         stopwatch.Stop();
-        program.PrintTime(stopwatch, "LastClientWithFirstOrDefault");
+        PrintTime(stopwatch, "LastClientWithFirstOrDefault");
 
         //Задание д 2
         stopwatch.Start();
-        Client lastClient2 = program.LastClientWithKey(clientsDict, "077863694");
+        Client lastClient2 = LastClientWithKey(clientsDict, "077863694");
         stopwatch.Stop();
-        program.PrintTime(stopwatch, "LastClientWithKey");
+        PrintTime(stopwatch, "LastClientWithKey");
 
     }
 
-    public void PrintTime(Stopwatch stopwatch, string nameOfMethod)
+    public static void PrintTime(Stopwatch stopwatch, string nameOfMethod)
     {
         Console.WriteLine($" Runtime {nameOfMethod}" + " " + stopwatch.Elapsed);
     }
 
-    public Client ClientSearchDictionary(Dictionary<string, Client> clientsDictionary, string phone)
+    public static Client ClientSearchDictionary(Dictionary<string, Client> clientsDictionary, string phone)
     {
         return clientsDictionary[phone];
     }
 
-    public Client ClientSearchList(List<Client> clients, string phone)
+    public static Client ClientSearchList(List<Client> clients, string phone)
     {
         var client = clients.FirstOrDefault(p => p.Phone == phone);
         return client;
     }
 
-    public List<Client> ClientSearchByAge(List<Client> clients, int age)
+    public static List<Client> ClientSearchByAge(List<Client> clients, int age)
     {
         var clientByAge = clients.FindAll(p => p.Age <= age);
         return clientByAge;
     }
 
-    public Employee SearchMinSalary(List<Employee> employees)
+    public static Employee SearchMinSalary(List<Employee> employees)
     {
        double minSalary = employees.Min(a => a.Salary);
        return employees.FirstOrDefault(a => a.Salary == minSalary);
@@ -94,13 +93,13 @@ public class Program
         
     }
 
-    public Client LastClientWithFirstOrDefault(Dictionary<string, Client> clients, string phone)
+    public static Client LastClientWithFirstOrDefault(Dictionary<string, Client> clients, string phone)
     {
         var lastClient = clients.FirstOrDefault(p => p.Key == phone).Value;
         return lastClient;
     }
 
-    public Client LastClientWithKey(Dictionary<string, Client> clients, string phone)
+    public static Client LastClientWithKey(Dictionary<string, Client> clients, string phone)
     {
         return clients[phone];
     }
