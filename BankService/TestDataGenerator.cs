@@ -10,18 +10,17 @@ namespace Services
 {
     public class TestDataGenerator
     {
-        public Dictionary<string, Client> DictionaryGenerator(List<Client> clients)
+        public Dictionary<string, Client> CreateClientDictionary(List<Client> clients)
         {
-            return clients.ToDictionary(k => k.Phone, k => k);
-
             var dictionary = new Dictionary<string, Client>();
+
             foreach (Client client in clients)
             {
                 dictionary[client.Phone] = client;
             }
             return dictionary;
         }
-        public Faker<Client> ClientGenerator()
+        public Faker<Client> CreateClientList()
         {
             return new Faker<Client>("ru")
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
@@ -31,7 +30,7 @@ namespace Services
                 .RuleFor(x => x.AccountNumber, f => f.Random.Int(1000, 9999));
         }
 
-        public Faker<Employee> EmployeeGenerator()
+        public Faker<Employee> CreateEmployeeList()
         {
             return new Faker<Employee>("ru")
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())

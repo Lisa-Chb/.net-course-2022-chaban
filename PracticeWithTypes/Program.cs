@@ -11,98 +11,82 @@ public class Program
     public static void Main(string[] args)
     {
         TestDataGenerator testDataGenerator = new TestDataGenerator();
-        Faker<Employee> generatorEmployee = testDataGenerator.EmployeeGenerator();
+        Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeList();
         List<Employee> employees = generatorEmployee.Generate(1000);
 
-        Faker<Client> generatorClient = testDataGenerator.ClientGenerator();
+        Faker<Client> generatorClient = testDataGenerator.CreateClientList();
         List<Client> clients = generatorClient.Generate(1000);
         Client testClient = new Client();
         testClient.Phone = "077863694";
         clients.Add(testClient);
 
-        Dictionary<string, Client> clientsDict = testDataGenerator.DictionaryGenerator(clients);
+        Dictionary<string, Client> clientsDict = testDataGenerator.CreateClientDictionary(clients);
 
         Stopwatch stopwatch = new Stopwatch();
         Program program = new Program();
 
         //Задание а
-        stopwatch.Start();
-       Client client6 =  program.ClientSearchList(clients, "077863694");
-        stopwatch.Stop();
-
-        program.PrintTime(stopwatch, "ClientSearchlist");
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Start();
+            Client client6 = clients.FirstOrDefault(p => p.Phone == "077863694");
+            stopwatch.Stop();
+            PrintTime(stopwatch, "ClientSearchlist");
+        }
 
         //Задание б      
-        stopwatch.Start();
-        Client client7 = program.ClientSearchDictionary(clientsDict, "077863694");
-        stopwatch.Stop();
-        program.PrintTime(stopwatch, "ClientSearchDictionary");
-
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Client client7 = clientsDict["077863694"];
+            stopwatch.Stop();
+            PrintTime(stopwatch, "ClientSearchDictionary");
+        }
         //Задание в
-        stopwatch.Start();
-       List<Client> clients3 = program.ClientSearchByAge(clients, 45);
-        stopwatch.Stop();
-        program.PrintTime(stopwatch, "ClientSearchByAge");
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            List<Client> clients3 = clients.FindAll(p => p.Age <= 45);
+            stopwatch.Stop();
+            PrintTime(stopwatch, "ClientSearchByAge");
+        }
 
         //Задание г
-        stopwatch.Start();
-       Employee client4 =  program.SearchMinSalary(employees);
-        stopwatch.Stop();
-        program.PrintTime(stopwatch, "SearchMinSalary");
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Employee client4 = employees.MinBy(a => a.Salary);
+            stopwatch.Stop();
+            PrintTime(stopwatch, "SearchMinSalary");
+        }
 
         //Задание д 1
-        stopwatch.Start();
-        Client lastClient = program.LastClientWithFirstOrDefault(clientsDict, "077863694");
-        stopwatch.Stop();
-        program.PrintTime(stopwatch, "LastClientWithFirstOrDefault");
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Client lastClient = clientsDict.FirstOrDefault(p => p.Key == "077863694").Value;
+            stopwatch.Stop();
+            PrintTime(stopwatch, "LastClientWithFirstOrDefault");
+        }
 
         //Задание д 2
-        stopwatch.Start();
-        Client lastClient2 = program.LastClientWithKey(clientsDict, "077863694");
-        stopwatch.Stop();
-        program.PrintTime(stopwatch, "LastClientWithKey");
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Client lastClient2 = clientsDict["077863694"];
+            stopwatch.Stop();
+            PrintTime(stopwatch, "LastClientWithKey");
+        }
 
     }
-
-    public void PrintTime(Stopwatch stopwatch, string nameOfMethod)
+    public static void PrintTime(Stopwatch stopwatch, string nameOfMethod)
     {
-        Console.WriteLine($" Runtime {nameOfMethod}" + " " + stopwatch.Elapsed);
-    }
-
-    public Client ClientSearchDictionary(Dictionary<string, Client> clientsDictionary, string phone)
-    {
-        return clientsDictionary[phone];
-    }
-
-    public Client ClientSearchList(List<Client> clients, string phone)
-    {
-        var client = clients.FirstOrDefault(p => p.Phone == phone);
-        return client;
-    }
-
-    public List<Client> ClientSearchByAge(List<Client> clients, int age)
-    {
-        var clientByAge = clients.FindAll(p => p.Age <= age);
-        return clientByAge;
-    }
-
-    public Employee SearchMinSalary(List<Employee> employees)
-    {
-       double minSalary = employees.Min(a => a.Salary);
-       return employees.FirstOrDefault(a => a.Salary == minSalary);
-        //var employee = employees.FirstOrDefault(p => p.Salary == p.Min();
-        
-    }
-
-    public Client LastClientWithFirstOrDefault(Dictionary<string, Client> clients, string phone)
-    {
-        var lastClient = clients.FirstOrDefault(p => p.Key == phone).Value;
-        return lastClient;
-    }
-
-    public Client LastClientWithKey(Dictionary<string, Client> clients, string phone)
-    {
-        return clients[phone];
+        Console.WriteLine($" Runtime {nameOfMethod}" + " " + stopwatch.ElapsedTicks);
     }
 }
 
