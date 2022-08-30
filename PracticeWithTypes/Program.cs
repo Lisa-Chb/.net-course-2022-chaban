@@ -23,7 +23,6 @@ public class Program
         Dictionary<string, Client> clientsDict = testDataGenerator.CreateClientDictionary(clients);
 
         Stopwatch stopwatch = new Stopwatch();
-        Program program = new Program();
 
         //Задание а
         for (int i = 0; i <= 3; i++)
