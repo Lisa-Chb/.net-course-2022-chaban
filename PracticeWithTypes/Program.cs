@@ -4,40 +4,90 @@ using System.Security.Cryptography.X509Certificates;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Numerics;
+using Bogus;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        DateTime dataTime = new DateTime(2000, 9, 23);
-        Employee employee = new Employee();
-        employee.Contract = UpdateContract("Lisa", "Chabah", dataTime, 2546);
+        TestDataGenerator testDataGenerator = new TestDataGenerator();
+        Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeList();
+        List<Employee> employees = generatorEmployee.Generate(1000);
 
-        Currency currency = new Currency();
-        currency.Name = "MDL";
-        UpdateCurrency(ref currency);
+        Faker<Client> generatorClient = testDataGenerator.CreateClientList();
+        List<Client> clients = generatorClient.Generate(1000);
+        Client testClient = new Client();
+        testClient.Phone = "077863694";
+        clients.Add(testClient);
 
-        Employee owner = new Employee();
-        BankService bankService = new BankService();
-        owner.Salary = bankService.CalculateOwnerSalary(1, 2000, 1400);
-     
-        Client client = new Client();
-        var employee1 = bankService.ClientToEmployee(client);
+        Dictionary<string, Client> clientsDict = testDataGenerator.CreateClientDictionary(clients);
+
+        Stopwatch stopwatch = new Stopwatch();
+
+        //Задание а
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Start();
+            Client client6 = clients.FirstOrDefault(p => p.Phone == "077863694");
+            stopwatch.Stop();
+            PrintTime(stopwatch, "ClientSearchlist");
+        }
+
+        //Задание б      
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Client client7 = clientsDict["077863694"];
+            stopwatch.Stop();
+            PrintTime(stopwatch, "ClientSearchDictionary");
+        }
+        //Задание в
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            List<Client> clients3 = clients.FindAll(p => p.Age <= 45);
+            stopwatch.Stop();
+            PrintTime(stopwatch, "ClientSearchByAge");
+        }
+
+        //Задание г
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Employee client4 = employees.MinBy(a => a.Salary);
+            stopwatch.Stop();
+            PrintTime(stopwatch, "SearchMinSalary");
+        }
+
+        //Задание д 1
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Client lastClient = clientsDict.FirstOrDefault(p => p.Key == "077863694").Value;
+            stopwatch.Stop();
+            PrintTime(stopwatch, "LastClientWithFirstOrDefault");
+        }
+
+        //Задание д 2
+        for (int i = 0; i <= 3; i++)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            Client lastClient2 = clientsDict["077863694"];
+            stopwatch.Stop();
+            PrintTime(stopwatch, "LastClientWithKey");
+        }
+
     }
-  
-    public static string UpdateContract(string firstName, string lastName, DateTime dateOfBirth, int seriesOfPassport)
+    public static void PrintTime(Stopwatch stopwatch, string nameOfMethod)
     {
-        string result = $"Имя сотрудника: {firstName} {lastName}. " +
-                        $"Дата рождения: {dateOfBirth}. " +
-                        $"Серия паспорта: {seriesOfPassport}";
-        return result;
+        Console.WriteLine($" Runtime {nameOfMethod}" + " " + stopwatch.ElapsedTicks);
     }
-
-    public static void UpdateCurrency(ref Currency currency)
-    {
-        currency.Name = "USD";     
-        currency.Code++;
-    }
-
 }
+
+
 
