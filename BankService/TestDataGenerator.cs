@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +8,37 @@ using System.Threading.Tasks;
 namespace Services
 {
     public class TestDataGenerator
-    {
+    {       
+        
+     
+        public static Faker<Account> AccountGenerator()
+        {
+            return new Faker<Account>()
+                 .RuleFor(x => x.Amount, f => f.Random.Int(100000, 999999))
+                 .RuleFor(x => x.Currency, f => new Currency (f.Random.ListItem(new List<string>
+                 {
+                    "RUB",
+                    "USD",
+                    "EUR",
+                    "MDL",
+                    "UAH"
+                 }),f.Random.Int(1000, 9999)));
+        }
+
+        public Dictionary<Client, Account> CreateClientDictionaryWithAccount(List<Client> clients)
+        {
+            Faker<Account> generatorAccount = AccountGenerator();
+            List<Account> accounts = generatorAccount.Generate(1000);
+
+            var newDictionary = new Dictionary<Client, Account>();
+
+            foreach (Client client in clients)
+            {
+                newDictionary[client] = accounts[new Random().Next(accounts.Count)];
+            }
+            return newDictionary;
+        }
+
         public Dictionary<string, Client> CreateClientDictionary(List<Client> clients)
         {
             var dictionary = new Dictionary<string, Client>();
