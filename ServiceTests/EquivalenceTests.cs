@@ -15,47 +15,46 @@ namespace ServiceTests
         {
             //Arrange
             TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Client> generatorClient = testDataGenerator.CreateClientList();
+            Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
             List<Client> clients = generatorClient.Generate(1000);
 
             //Создание клиента с двумя аккаунтами 
-            Client testClient1 = new Client();
-            testClient1.Phone = "77658346";
-            testClient1.Age = 65;
-            testClient1.FirstName = "Johny";
-            testClient1.LastName = "Depp";          
+            Client testClientInTheDict = new Client();
+            testClientInTheDict.Phone = "77658346";
+            testClientInTheDict.Age = 65;
+            testClientInTheDict.FirstName = "Johny";
+            testClientInTheDict.LastName = "Depp";          
 
-            Account testAccount1 = new Account();
-            Currency testCurrency1 = new Currency("RUB", 5637);
-            testAccount1.Amount = 157000;         
-            testAccount1.Currency = testCurrency1;      
+            Account firstAccountInTheDict = new Account();
+            Currency testCurrency_RUB = new Currency("RUB", 5637);
+            firstAccountInTheDict.Amount = 157000;         
+            firstAccountInTheDict.Currency = testCurrency_RUB;      
 
-            Account testAccount2 = new Account();
-            Currency testCurrency2 = new Currency("USD", 7359);
-            testAccount2.Amount = 957420;
-            testAccount2.Currency = testCurrency2;
+            Account secondAccountInTheDict = new Account();
+            Currency testCurrency_USD = new Currency("USD", 7359);
+            secondAccountInTheDict.Amount = 957420;
+            secondAccountInTheDict.Currency = testCurrency_USD;
 
             //Добавление аккаунтов в список
-            List<Account> testAccountList1 = new List<Account>();
-            testAccountList1.Add(testAccount1);
-            testAccountList1.Add(testAccount2);
+            List<Account> testAccountList = new List<Account>();
+            testAccountList.AddRange(new[] {firstAccountInTheDict, secondAccountInTheDict});
 
             //Добавление клиента и списка в словарь
             Dictionary<Client, List <Account>> dictionary = testDataGenerator.CreateClientDictionaryWithAccount(clients);
-            dictionary.Add(testClient1, testAccountList1);
+            dictionary.Add(testClientInTheDict, testAccountList);
 
             //Создание идентичного клиента 
-            Client testClient2 = new Client();
-            testClient2.Phone = "77658346";
-            testClient2.Age = 65;
-            testClient2.FirstName = "Johny";
-            testClient2.LastName = "Depp";           
+            Client testClientOutOfTheDict = new Client();
+            testClientOutOfTheDict.Phone = "77658346";
+            testClientOutOfTheDict.Age = 65;
+            testClientOutOfTheDict.FirstName = "Johny";
+            testClientOutOfTheDict.LastName = "Depp";           
 
             //Act
-            List <Account> finalAccout = dictionary[testClient2];
+            List <Account> expectedAccountList = dictionary[testClientOutOfTheDict];
 
             //Assert
-            Assert.Equal(finalAccout, testAccountList1);
+            Assert.Equal(expectedAccountList, testAccountList);
         }
 
         [Fact]
@@ -64,27 +63,27 @@ namespace ServiceTests
         {
             //Arrange
             TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeList();
+            Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeListGenerator();
             List<Employee> employes = generatorEmployee.Generate(1000);
 
-            Employee testEmployee1 = new Employee();
-            testEmployee1.FirstName = "Alise";
-            testEmployee1.LastName = "Hansonn";
-            testEmployee1.Age = 27;
-            testEmployee1.Phone = "77465385";
-            testEmployee1.Position = "Программист";
+            Employee employeeInTheList = new Employee();
+            employeeInTheList.FirstName = "Alise";
+            employeeInTheList.LastName = "Hansonn";
+            employeeInTheList.Age = 27;
+            employeeInTheList.Phone = "77465385";
+            employeeInTheList.Position = "Программист";
 
-            employes.Add(testEmployee1);
+            employes.Add(employeeInTheList);
 
-            Employee testEmployee2 = new Employee();
-            testEmployee2.FirstName = "Alise";
-            testEmployee2.LastName = "Hansonn";
-            testEmployee2.Age = 27;
-            testEmployee2.Phone = "77465385";
-            testEmployee2.Position = "Программист";
+            Employee employeeOutOfTheList = new Employee();
+            employeeOutOfTheList.FirstName = "Alise";
+            employeeOutOfTheList.LastName = "Hansonn";
+            employeeOutOfTheList.Age = 27;
+            employeeOutOfTheList.Phone = "77465385";
+            employeeOutOfTheList.Position = "Программист";
 
             //Act 
-            bool testBool = employes.Contains(testEmployee2);
+            bool testBool = employes.Contains(employeeOutOfTheList);
 
             //Assert
             Assert.True(testBool);

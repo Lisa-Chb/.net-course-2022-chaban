@@ -11,10 +11,10 @@ public class Program
     public static void Main(string[] args)
     {
         TestDataGenerator testDataGenerator = new TestDataGenerator();
-        Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeList();
+        Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeListGenerator();
         List<Employee> employees = generatorEmployee.Generate(1000);
 
-        Faker<Client> generatorClient = testDataGenerator.CreateClientList();
+        Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
         List<Client> clients = generatorClient.Generate(1000);
         Client testClient = new Client();
         testClient.Phone = "077863694";

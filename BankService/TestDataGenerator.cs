@@ -9,11 +9,11 @@ namespace Services
 {
     public class TestDataGenerator
     {
-        public static Faker<Account> CreateAccount()
+        public Faker<Account> CreateAccount()
         {
             return new Faker<Account>()
                  .RuleFor(x => x.Amount, f => f.Random.Int(100000, 999999))
-                 .RuleFor(x => x.Currency, f => new Currency(f.Random.ListItem(new List<string>
+                 .RuleFor(x => x.Currency, f => new Currency(f.Random.ArrayElement(new[]
                  {
                     "RUB",
                     "USD",
@@ -53,7 +53,7 @@ namespace Services
             }
             return dictionary;
         }
-        public Faker<Client> CreateClientList()
+        public Faker<Client> CreateClientListGenerator()
         {
             return new Faker<Client>("ru")
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
@@ -63,7 +63,7 @@ namespace Services
                 .RuleFor(x => x.AccountNumber, f => f.Random.Int(1000, 9999));
         }
 
-        public Faker<Employee> CreateEmployeeList()
+        public Faker<Employee> CreateEmployeeListGenerator()
         {
             return new Faker<Employee>("ru")
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
@@ -71,13 +71,14 @@ namespace Services
                 .RuleFor(x => x.Age, f => f.Random.Byte(18, 100))
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
                 .RuleFor(x => x.Salary, f => f.Random.Int(5000, 20000))
-                .RuleFor(x => x.Position, f => f.Random.ListItem(new List<string> {
+                .RuleFor(x => x.Position, f => f.Random.ArrayElement(new[] 
+                {
                             "Программист",
                             "Менеджер",
                             "Бизнес-аналитик",
                             "Дизайнер",
-                            "Тестировщик" }));
-
+                            "Тестировщик" 
+                }));
         }
     }
 }

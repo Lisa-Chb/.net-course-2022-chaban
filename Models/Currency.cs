@@ -10,7 +10,6 @@ namespace Models
     {
         public string Name { get; set; }
         public int Code { get; set; }
-
        public Currency(string Name, int Code)
         {
             this.Name = Name;
