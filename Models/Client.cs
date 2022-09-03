@@ -10,7 +10,6 @@ namespace Models
     {
         public int AccountNumber { get; set; }
 
-
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -29,13 +28,9 @@ namespace Models
                 client.SeriesOfPassport == SeriesOfPassport;
 
         }
-
         public override int GetHashCode()
         {
             return HashCode.Combine(FirstName, LastName, Age, AccountNumber, DateOfBirth, Phone, SeriesOfPassport);
         }
-
     }
-
-    
 }

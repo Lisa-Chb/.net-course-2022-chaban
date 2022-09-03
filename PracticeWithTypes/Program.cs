@@ -20,7 +20,7 @@ public class Program
         testClient.Phone = "077863694";
         clients.Add(testClient);
 
-        Dictionary<string, Client> clientsDict = testDataGenerator.CreateClientDictionary(clients);
+        Dictionary<string, Client> clientsDict = testDataGenerator.CreateClientDictionaryWithPhone(clients);
 
         Stopwatch stopwatch = new Stopwatch();
 

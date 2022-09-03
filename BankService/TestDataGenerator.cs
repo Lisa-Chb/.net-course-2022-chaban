@@ -8,38 +8,42 @@ using System.Threading.Tasks;
 namespace Services
 {
     public class TestDataGenerator
-    {       
-        
-     
-        public static Faker<Account> AccountGenerator()
+    {
+        public static Faker<Account> CreateAccount()
         {
             return new Faker<Account>()
                  .RuleFor(x => x.Amount, f => f.Random.Int(100000, 999999))
-                 .RuleFor(x => x.Currency, f => new Currency (f.Random.ListItem(new List<string>
+                 .RuleFor(x => x.Currency, f => new Currency(f.Random.ListItem(new List<string>
                  {
                     "RUB",
                     "USD",
                     "EUR",
                     "MDL",
                     "UAH"
-                 }),f.Random.Int(1000, 9999)));
+                 }), f.Random.Int(1000, 9999)));
         }
 
-        public Dictionary<Client, Account> CreateClientDictionaryWithAccount(List<Client> clients)
+        public Dictionary<Client, List<Account>> CreateClientDictionaryWithAccount(List<Client> clients)
         {
-            Faker<Account> generatorAccount = AccountGenerator();
+            Faker<Account> generatorAccount = CreateAccount();
             List<Account> accounts = generatorAccount.Generate(1000);
 
-            var newDictionary = new Dictionary<Client, Account>();
+            var newDictionary = new Dictionary<Client, List <Account>>();
 
             foreach (Client client in clients)
             {
-                newDictionary[client] = accounts[new Random().Next(accounts.Count)];
-            }
+                var valueAccountsList = new List<Account>()
+                  { accounts[new Random().Next(accounts.Count)],
+                    accounts[new Random().Next(accounts.Count)],
+                    accounts[new Random().Next(accounts.Count)]
+                   };
+                newDictionary[client] = valueAccountsList;
+            };
+
             return newDictionary;
         }
 
-        public Dictionary<string, Client> CreateClientDictionary(List<Client> clients)
+        public Dictionary<string, Client> CreateClientDictionaryWithPhone(List<Client> clients)
         {
             var dictionary = new Dictionary<string, Client>();
 
