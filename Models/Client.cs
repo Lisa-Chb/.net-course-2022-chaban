@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.ModelsValidationExceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,42 @@ namespace Models
     public class Client : Person
     {
         public int AccountNumber { get; set; }
+
+        public override int Age
+        {
+            get => Age;
+            set
+            {
+                if (value < 18)
+                    throw new ClientAgeValidationException("Лицам до 18 регистрация запрещена");
+                else
+                    Age = value;
+            }
+        }
+
+        public override string SeriesOfPassport
+        {
+            get => SeriesOfPassport;
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                    throw new ClientSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+                else
+                    SeriesOfPassport = value;
+            }
+        }
+
+        public override int? NumberOfPassport
+        {
+            get => NumberOfPassport;
+            set
+            {
+                if ( value == null)
+                    throw new ClientNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+                else
+                    NumberOfPassport = value;
+            }           
+        }
 
         public override bool Equals(object obj)
         {
@@ -25,12 +62,14 @@ namespace Models
                 client.AccountNumber == AccountNumber &&
                 client.DateOfBirth == DateOfBirth &&
                 client.Phone == Phone &&
-                client.SeriesOfPassport == SeriesOfPassport;
+                client.SeriesOfPassport == SeriesOfPassport &&
+                client.NumberOfPassport == NumberOfPassport;
 
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine(FirstName, LastName, Age, AccountNumber, DateOfBirth, Phone, SeriesOfPassport);
+            return HashCode.Combine(FirstName, LastName, Age, AccountNumber, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport);
         }
     }
 }
+

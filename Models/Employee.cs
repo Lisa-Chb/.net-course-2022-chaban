@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.ModelsValidationExceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,56 @@ namespace Models
 {
     public class Employee : Person
     {
-        public string Position { get; set; }
         public string Contract { get; set; }
         public int Salary { get; set; }
+
+        public string Position
+        {
+            get => Position;
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                    throw new EmployeePositionValidationException("Необходимо указать должность");
+                else
+                    Position = value;
+            }
+        }
+       
+        public override int Age
+        {
+            get => Age;
+            set
+            {
+                if (value < 18)
+                    throw new EmployeeAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
+                else
+                    Age = value;
+            }
+        }
+
+        public override string SeriesOfPassport
+        {
+            get => SeriesOfPassport;
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                    throw new EmployeeSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+                else
+                    SeriesOfPassport = value;
+            }
+        }
+
+        public override int? NumberOfPassport
+        {
+            get => NumberOfPassport;
+            set
+            {
+                if (value == null)
+                    throw new EmployeeNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+                else
+                    NumberOfPassport = value;
+            }
+        }
 
         public override bool Equals(object obj)
         {
