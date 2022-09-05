@@ -10,29 +10,22 @@ namespace Services
 {
     public class EmployeeService
     {
-        private List<Employee> _employes;
-        public void AddNewEmployee(List<Employee> _employess, Employee employee)
+        private List<Employee> _employees;
+        public void AddNewEmployee(Employee employee)
         {
-            try
-            {
-                _employess.Add(employee);
-            }
-            catch (EmployeeAgeValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (EmployeeSeriesOfPassportValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (EmployeeNumberOfPassportValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (EmployeePositionValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            if (employee.Age < 18)
+                throw new EmployeeAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
+
+            if (string.IsNullOrEmpty(employee.SeriesOfPassport))
+                throw new EmployeeSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+
+            if (employee.NumberOfPassport == null)
+                throw new EmployeeNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+
+            if (string.IsNullOrEmpty(employee.Position))
+                throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
+
+            _employees.Add(employee);
         }
     }
 }

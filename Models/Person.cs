@@ -11,9 +11,9 @@ namespace Models
     {
         public string FirstName { get; set; }   
         public string LastName { get; set; }      
-        public virtual int Age { get; set; }
-        public virtual int? NumberOfPassport { get; set; }
-        public virtual string SeriesOfPassport { get; set; }
+        public int Age { get; set; }
+        public int? NumberOfPassport { get; set; }
+        public string SeriesOfPassport { get; set; }
         public string Phone  { get; set; }
         public DateTime DateOfBirth { get; set; }       
 

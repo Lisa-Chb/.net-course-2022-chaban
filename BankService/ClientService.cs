@@ -1,34 +1,36 @@
-﻿using Models;
+﻿
+using Models;
 using Models.ModelsValidationExceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
     public class ClientService
-    {
-        private List<Client> _clients; 
-        public void AddNewClient(List<Client> _clients, Client client)
-        {
-            try
-            {
-                _clients.Add(client);
-            }
-           catch (ClientAgeValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch(ClientSeriesOfPassportValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch(ClientNumberOfPassportValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+    {   
+        private Dictionary<Client, List <Account>> _clientsDict;
+
+        public void AddNewClient(Client client)
+        {      
+            if (client.Age < 18)
+                throw new ClientAgeValidationException("Лицам до 18 регистрация запрещена");
+
+            if (string.IsNullOrEmpty(client.SeriesOfPassport))
+                throw new ClientSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+
+            if (client.NumberOfPassport == null)
+                throw new ClientNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+
+            var newAcccountList = new List <Account>();
+
+            var currency = new Currency();
+            currency.Name = "USD";
+
+            var account = new Account();
+            account.Currency = currency;
+
+            newAcccountList.Add(account);
+
+            _clientsDict.Add(client, newAcccountList);       
         }
     }
 }
+
