@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Models.ModelsValidationExceptions
 {
-    public class ClientAgeValidationException : Exception
+    public class PersonNumberOfPassportValidationException : Exception
     {
-        public ClientAgeValidationException(string message)
+        public PersonNumberOfPassportValidationException(string message)
         : base(message) { }
-    }
+    }   
 }
-
-    
-

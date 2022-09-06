@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Models.ModelsValidationExceptions
 {
-    public class ClientNumberOfPassportValidationException : Exception
+    public class ClientAlreadyExistException : Exception
     {
-        public ClientNumberOfPassportValidationException(string message)
+        public ClientAlreadyExistException(string message)
         : base(message) { }
-    }   
+    }       
 }

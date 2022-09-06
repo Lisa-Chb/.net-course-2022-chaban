@@ -14,13 +14,13 @@ namespace Services
         public void AddNewEmployee(Employee employee)
         {
             if (employee.Age < 18)
-                throw new EmployeeAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
+                throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
 
             if (string.IsNullOrEmpty(employee.SeriesOfPassport))
-                throw new EmployeeSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+                throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
 
             if (employee.NumberOfPassport == null)
-                throw new EmployeeNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+                throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
             if (string.IsNullOrEmpty(employee.Position))
                 throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");

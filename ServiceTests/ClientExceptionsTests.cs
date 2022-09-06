@@ -17,13 +17,13 @@ namespace ServiceTests
         public void ClientAgeValidationExceptionTest()
         {
             //Arrange
-            Client clientWithoutAge= new Client();
+            var clientWithoutAge= new Client();
             clientWithoutAge.SeriesOfPassport = "I-ПР";
             clientWithoutAge.NumberOfPassport = 356223435;
 
             //Act Assert
             ClientService testClientService = new ClientService();
-            Assert.Throws<ClientAgeValidationException>(() => testClientService.AddNewClient(clientWithoutAge));
+            Assert.Throws<PersonAgeValidationException>(() => testClientService.AddNewClient(clientWithoutAge));
         }
 
         [Fact]
@@ -31,13 +31,13 @@ namespace ServiceTests
         public void ClientSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
-            Client clientWithoutSeriesOfPassort = new Client();
+            var clientWithoutSeriesOfPassort = new Client();
             clientWithoutSeriesOfPassort.NumberOfPassport = 356223435;
             clientWithoutSeriesOfPassort.Age = 20;
             
             //Act Assert
             ClientService testClientService = new ClientService();
-            Assert.Throws<ClientSeriesOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutSeriesOfPassort));
+            Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutSeriesOfPassort));
         }
 
         [Fact]
@@ -45,13 +45,35 @@ namespace ServiceTests
         public void ClientNumberOfPassportValidationExceptionTest()
         {
             //Arrange
-            Client clientWithoutNumberOfPassort = new Client();
+            var clientWithoutNumberOfPassort = new Client();
             clientWithoutNumberOfPassort.Age = 20;
             clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
             
             //Act Assert
             ClientService testClientService = new ClientService();
-            Assert.Throws<ClientNumberOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutNumberOfPassort));
+            Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutNumberOfPassort));
+        }
+
+        [Fact]
+
+        public void ClientAlreadyExistExceptionTest()
+        {
+            //Arrange
+            var clientInTheDictionary = new Client();
+            clientInTheDictionary.Age = 20;
+            clientInTheDictionary.SeriesOfPassport = "I-ПР";
+            clientInTheDictionary.NumberOfPassport = 356223435;
+
+            ClientService testClientService = new ClientService();
+            testClientService.AddNewClient(clientInTheDictionary);
+
+            var clientOutOfTheDictionary = new Client();
+            clientOutOfTheDictionary.Age = 20;
+            clientOutOfTheDictionary.SeriesOfPassport = "I-ПР";
+            clientOutOfTheDictionary.NumberOfPassport = 356223435;
+
+            //Act Assert
+            Assert.Throws<ClientAlreadyExistException>(() => testClientService.AddNewClient(clientOutOfTheDictionary));
         }
     }
 }
