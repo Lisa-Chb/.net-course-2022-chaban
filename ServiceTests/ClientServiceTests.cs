@@ -1,6 +1,6 @@
 ﻿using Models;
-using Models.ModelsValidationExceptions;
 using Services;
+using Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using Xunit;
 
 namespace ServiceTests
 {
-    public class ClientExceptionsTests
+    public class ClientServiceTests
     {
         [Fact]
 
@@ -59,21 +59,22 @@ namespace ServiceTests
         public void ClientAlreadyExistExceptionTest()
         {
             //Arrange
-            var clientInTheDictionary = new Client();
-            clientInTheDictionary.Age = 20;
-            clientInTheDictionary.SeriesOfPassport = "I-ПР";
-            clientInTheDictionary.NumberOfPassport = 356223435;
-
             ClientService testClientService = new ClientService();
-            testClientService.AddNewClient(clientInTheDictionary);
 
-            var clientOutOfTheDictionary = new Client();
-            clientOutOfTheDictionary.Age = 20;
-            clientOutOfTheDictionary.SeriesOfPassport = "I-ПР";
-            clientOutOfTheDictionary.NumberOfPassport = 356223435;
+            var dictionaryClient = new Client();
+            dictionaryClient.Age = 20;
+            dictionaryClient.SeriesOfPassport = "I-ПР";
+            dictionaryClient.NumberOfPassport = 356223435;
+
+            var client = new Client();
+            client.Age = 20;
+            client.SeriesOfPassport = "I-ПР";
+            client.NumberOfPassport = 356223435;
+
+            testClientService.AddNewClient(dictionaryClient);
 
             //Act Assert
-            Assert.Throws<ClientAlreadyExistException>(() => testClientService.AddNewClient(clientOutOfTheDictionary));
+            Assert.Throws<ClientAlreadyExistException>(() => testClientService.AddNewClient(client));
         }
     }
 }

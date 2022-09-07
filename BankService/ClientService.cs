@@ -1,6 +1,6 @@
 ﻿
 using Models;
-using Models.ModelsValidationExceptions;
+using Services.Exceptions;
 
 namespace Services
 {
