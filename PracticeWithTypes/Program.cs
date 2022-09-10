@@ -47,7 +47,7 @@ public class Program
         {
             stopwatch.Reset();
             stopwatch.Start();
-            List<Client> clients3 = clients.FindAll(p => p.Age <= 45);
+            List<Client> clients3 = clients.FindAll(p => p.DateOfBirth.Day/365 <= 45);
             stopwatch.Stop();
             PrintTime(stopwatch, "ClientSearchByAge");
         }
