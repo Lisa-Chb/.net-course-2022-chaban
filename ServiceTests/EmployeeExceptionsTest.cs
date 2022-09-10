@@ -18,12 +18,14 @@ namespace ServiceTests
         {
             //Arrange
             var employeeWithoutAge = new Employee();
+            employeeWithoutAge.DateOfBirth = new DateTime(year: 2007, 5, 6);
             employeeWithoutAge.SeriesOfPassport = "I-ПР";
             employeeWithoutAge.NumberOfPassport = 356223435;
             employeeWithoutAge.Position = "Программист";
 
             //Act Assert
-            EmployeeService testEmployeeService = new EmployeeService();
+            var employeeStorage = new EmployeeStorage();
+            EmployeeService testEmployeeService = new EmployeeService(employeeStorage);
             Assert.Throws<PersonAgeValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutAge));
         }
 
@@ -34,11 +36,12 @@ namespace ServiceTests
             //Arrange
             var employeeWithoutSeriesOfPassort = new Employee();
             employeeWithoutSeriesOfPassort.NumberOfPassport = 356223435;
-            employeeWithoutSeriesOfPassort.Age = 20;
+            employeeWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
             employeeWithoutSeriesOfPassort.Position = "Программист";
 
             //Act Assert
-            EmployeeService testEmployeeService = new EmployeeService();
+            var employeeStorage = new EmployeeStorage();
+            EmployeeService testEmployeeService = new EmployeeService(employeeStorage);
             Assert.Throws<PersonSeriesOfPassportValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutSeriesOfPassort));
         }
 
@@ -48,12 +51,13 @@ namespace ServiceTests
         {
             //Arrange
             var employeeWithoutNumberOfPassort = new Employee();
-            employeeWithoutNumberOfPassort.Age = 20;
+            employeeWithoutNumberOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
             employeeWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
             employeeWithoutNumberOfPassort.Position = "Программист";
 
             //Act Assert
-            EmployeeService testEmployeeService = new EmployeeService();
+            var employeeStorage = new EmployeeStorage();
+            EmployeeService testEmployeeService = new EmployeeService(employeeStorage);
             Assert.Throws<PersonNumberOfPassportValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutNumberOfPassort));
         }
 
@@ -63,12 +67,13 @@ namespace ServiceTests
         {
             //Arrange
             var employeeWithoutPosition = new Employee();
-            employeeWithoutPosition.Age = 20;
+            employeeWithoutPosition.DateOfBirth = new DateTime(year: 1998, 5, 5);
             employeeWithoutPosition.SeriesOfPassport = "I-ПР";
             employeeWithoutPosition.NumberOfPassport = 3264567;
 
             //Act Assert
-            EmployeeService testEmployeeService = new EmployeeService();
+            var employeeStorage = new EmployeeStorage();
+            EmployeeService testEmployeeService = new EmployeeService(employeeStorage); ;
             Assert.Throws<EmployeePositionValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutPosition));
         }
     }

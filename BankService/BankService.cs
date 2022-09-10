@@ -16,7 +16,6 @@ namespace Services
             {
                 FirstName = client.FirstName,
                 LastName = client.LastName,
-                Age = client.Age,
                 SeriesOfPassport = client.SeriesOfPassport,
                 Phone = client.Phone,
                 DateOfBirth = client.DateOfBirth

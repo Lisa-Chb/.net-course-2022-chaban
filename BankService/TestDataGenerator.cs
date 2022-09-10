@@ -57,9 +57,9 @@ namespace Services
         {
             return new Faker<Client>("ru")
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
-                .RuleFor(x => x.LastName, f => f.Name.LastName())
-                .RuleFor(x => x.Age, f => f.Random.Byte(18, 100))
+                .RuleFor(x => x.LastName, f => f.Name.LastName())                
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
+                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue)) 
                 .RuleFor(x => x.AccountNumber, f => f.Random.Int(1000, 9999));
         }
 
@@ -68,8 +68,8 @@ namespace Services
             return new Faker<Employee>("ru")
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())
-                .RuleFor(x => x.Age, f => f.Random.Byte(18, 100))
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
+                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue))
                 .RuleFor(x => x.Salary, f => f.Random.Int(5000, 20000))
                 .RuleFor(x => x.Position, f => f.Random.ArrayElement(new[] 
                 {

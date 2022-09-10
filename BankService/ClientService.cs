@@ -1,19 +1,25 @@
 ﻿
 using Models;
 using Services.Exceptions;
+using Services.Filtres;
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Services
 {
     public class ClientService
     {
-        private Dictionary<Client, List<Account>> _clientsDict = new Dictionary<Client, List<Account>>();
+        private readonly ClientStorage _clientStorage;
+
+        public ClientService(ClientStorage clientStorage)
+        {
+            _clientStorage = clientStorage;
+        }
 
         public void AddNewClient(Client client)
         {
-            if (_clientsDict.ContainsKey(client))
-                throw new ClientAlreadyExistException("Данный клиент уже существует");
-
-            if (client.Age < 18)
+            if (((DateTime.Now - client.DateOfBirth).Days/365) < 18)
                 throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
 
             if (string.IsNullOrEmpty(client.SeriesOfPassport))
@@ -22,18 +28,35 @@ namespace Services
             if (client.NumberOfPassport == null)
                 throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            var newAcccountList = new List<Account>();
-
-            var currency = new Currency();
-            currency.Name = "USD";
-
-            var account = new Account();
-            account.Currency = currency;
-
-            newAcccountList.Add(account);
-
-            _clientsDict.Add(client, newAcccountList);
+            _clientStorage.AddNewClient(client);            
         }
+
+        public Dictionary<Client, List<Account>> GetClients(ClientFilter filter)
+        {
+            var clientDict = _clientStorage.GetDictionary();
+
+            var result = clientDict.ToArray();
+
+            if (filter.FirstName != null)
+                result = result.Where(s => s.Key.FirstName == filter.FirstName).ToArray();
+
+            if (filter.LastName != null)
+                result =  result.Where(s => s.Key.LastName == filter.LastName).ToArray();
+
+            if(filter.NumberOfPassport != null)
+                result  = result.Where(s => s.Key.NumberOfPassport == filter.NumberOfPassport).ToArray();
+
+            if (filter.MinDateTime != null)
+                result = result.Where(s => s.Key.DateOfBirth <= filter.MinDateTime).ToArray();
+
+            if (filter.MaxDateTime != null)
+                result = result.Where(s => s.Key.DateOfBirth >= filter.MaxDateTime).ToArray();
+
+            return new Dictionary<Client, List < Account>>(result);
+        }
+ 
     }
 }
+   
+
 
