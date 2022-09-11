@@ -18,11 +18,12 @@ namespace ServiceTests
         {
             //Arrange
             var clientWithoutAge= new Client();
+            clientWithoutAge.DateOfBirth = new DateTime(year: 2007, 5, 6);
             clientWithoutAge.SeriesOfPassport = "I-ПР";
             clientWithoutAge.NumberOfPassport = 356223435;
 
             //Act Assert
-            ClientService testClientService = new ClientService();
+            ClientService testClientService = new ClientService(new ClientStorage());
             Assert.Throws<PersonAgeValidationException>(() => testClientService.AddNewClient(clientWithoutAge));
         }
 
@@ -33,10 +34,10 @@ namespace ServiceTests
             //Arrange
             var clientWithoutSeriesOfPassort = new Client();
             clientWithoutSeriesOfPassort.NumberOfPassport = 356223435;
-            clientWithoutSeriesOfPassort.Age = 20;
-            
+            clientWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
+
             //Act Assert
-            ClientService testClientService = new ClientService();
+            ClientService testClientService = new ClientService(new ClientStorage());
             Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutSeriesOfPassort));
         }
 
@@ -46,11 +47,11 @@ namespace ServiceTests
         {
             //Arrange
             var clientWithoutNumberOfPassort = new Client();
-            clientWithoutNumberOfPassort.Age = 20;
+            clientWithoutNumberOfPassort.DateOfBirth = new DateTime(year:1998, 5, 5);
             clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
             
             //Act Assert
-            ClientService testClientService = new ClientService();
+            ClientService testClientService = new ClientService(new ClientStorage());
             Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutNumberOfPassort));
         }
 
@@ -59,15 +60,15 @@ namespace ServiceTests
         public void ClientAlreadyExistExceptionTest()
         {
             //Arrange
-            ClientService testClientService = new ClientService();
+            ClientService testClientService = new ClientService(new ClientStorage());
 
             var dictionaryClient = new Client();
-            dictionaryClient.Age = 20;
+            dictionaryClient.DateOfBirth = new DateTime(year: 1998, 5, 5);
             dictionaryClient.SeriesOfPassport = "I-ПР";
             dictionaryClient.NumberOfPassport = 356223435;
 
             var client = new Client();
-            client.Age = 20;
+            client.DateOfBirth = new DateTime(year: 1998, 5, 5);
             client.SeriesOfPassport = "I-ПР";
             client.NumberOfPassport = 356223435;
 

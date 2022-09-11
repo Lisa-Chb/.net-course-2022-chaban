@@ -21,7 +21,7 @@ namespace ServiceTests
             //Создание клиента с двумя аккаунтами 
             Client testClientInTheDict = new Client();
             testClientInTheDict.Phone = "77658346";
-            testClientInTheDict.Age = 65;
+            testClientInTheDict.DateOfBirth = new DateTime(year: 1998, 5, 5);
             testClientInTheDict.FirstName = "Johny";
             testClientInTheDict.LastName = "Depp";          
 
@@ -46,7 +46,7 @@ namespace ServiceTests
             //Создание идентичного клиента 
             Client testClientOutOfTheDict = new Client();
             testClientOutOfTheDict.Phone = "77658346";
-            testClientOutOfTheDict.Age = 65;
+            testClientOutOfTheDict.DateOfBirth = new DateTime(year: 1998, 5, 5);
             testClientOutOfTheDict.FirstName = "Johny";
             testClientOutOfTheDict.LastName = "Depp";           
 
@@ -69,7 +69,7 @@ namespace ServiceTests
             Employee employeeInTheList = new Employee();
             employeeInTheList.FirstName = "Alise";
             employeeInTheList.LastName = "Hansonn";
-            employeeInTheList.Age = 27;
+            employeeInTheList.DateOfBirth = new DateTime(year: 1998, 6, 5);
             employeeInTheList.Phone = "77465385";
             employeeInTheList.Position = "Программист";
 
@@ -78,7 +78,7 @@ namespace ServiceTests
             Employee employeeOutOfTheList = new Employee();
             employeeOutOfTheList.FirstName = "Alise";
             employeeOutOfTheList.LastName = "Hansonn";
-            employeeOutOfTheList.Age = 27;
+            employeeOutOfTheList.DateOfBirth = new DateTime(year: 1998, 6, 5);
             employeeOutOfTheList.Phone = "77465385";
             employeeOutOfTheList.Position = "Программист";
 

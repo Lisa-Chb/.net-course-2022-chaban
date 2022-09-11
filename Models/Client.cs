@@ -21,7 +21,6 @@ namespace Models
             var client = (Client)obj;
             return client.FirstName == FirstName &&
                 client.LastName == LastName &&
-                client.Age == Age &&
                 client.AccountNumber == AccountNumber &&
                 client.DateOfBirth == DateOfBirth &&
                 client.Phone == Phone &&
@@ -31,7 +30,7 @@ namespace Models
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine(FirstName, LastName, Age, AccountNumber, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport);
+            return HashCode.Combine(FirstName, LastName, AccountNumber, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport);
         }
     }
 }

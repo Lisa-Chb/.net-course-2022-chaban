@@ -19,7 +19,6 @@ namespace Models
             var employee = (Employee)obj;
             return employee.FirstName == FirstName &&
                 employee.LastName == LastName &&
-                employee.Age == Age &&
                 employee.DateOfBirth == DateOfBirth &&
                 employee.Phone == Phone &&
                 employee.SeriesOfPassport == SeriesOfPassport &&
@@ -30,7 +29,7 @@ namespace Models
 
         public override int GetHashCode()
         {            
-          var hashCode1 = HashCode.Combine(FirstName, LastName, Age, DateOfBirth, Phone, SeriesOfPassport, Position, Contract);
+          var hashCode1 = HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, Position, Contract);
             return hashCode1 + Salary;
         }
 
