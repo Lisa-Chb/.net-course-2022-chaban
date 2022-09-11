@@ -5,6 +5,8 @@ using Services.Filtres;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Linq;
+
 
 namespace Services
 {
@@ -35,22 +37,22 @@ namespace Services
         {
             var clientDict = _clientStorage.GetDictionary();
 
-            var result = clientDict.ToArray();
+            var result = clientDict.AsEnumerable();
 
             if (filter.FirstName != null)
-                result = result.Where(s => s.Key.FirstName == filter.FirstName).ToArray();
+                result = result.Where(s => s.Key.FirstName == filter.FirstName);
 
             if (filter.LastName != null)
-                result =  result.Where(s => s.Key.LastName == filter.LastName).ToArray();
+                result =  result.Where(s => s.Key.LastName == filter.LastName);
 
             if(filter.NumberOfPassport != null)
-                result  = result.Where(s => s.Key.NumberOfPassport == filter.NumberOfPassport).ToArray();
+                result  = result.Where(s => s.Key.NumberOfPassport == filter.NumberOfPassport);
 
             if (filter.MinDateTime != null)
-                result = result.Where(s => s.Key.DateOfBirth <= filter.MinDateTime).ToArray();
+                result = result.Where(s => s.Key.DateOfBirth <= filter.MinDateTime);
 
             if (filter.MaxDateTime != null)
-                result = result.Where(s => s.Key.DateOfBirth >= filter.MaxDateTime).ToArray();
+                result = result.Where(s => s.Key.DateOfBirth >= filter.MaxDateTime);
 
             return new Dictionary<Client, List < Account>>(result);
         }
