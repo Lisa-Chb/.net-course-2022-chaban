@@ -2,19 +2,15 @@
 using Models;
 using Services.Exceptions;
 using Services.Filtres;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Linq;
-
+using Services.Storages;
 
 namespace Services
 {
     public class ClientService
     {
-        private readonly ClientStorage _clientStorage;
-
-        public ClientService(ClientStorage clientStorage)
+        private readonly IClientStorage _clientStorage;
+        
+        public ClientService(IClientStorage clientStorage)
         {
             _clientStorage = clientStorage;
         }
@@ -30,12 +26,12 @@ namespace Services
             if (client.NumberOfPassport == null)
                 throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            _clientStorage.AddNewClient(client);            
+            _clientStorage.Add(client);            
         }
 
         public Dictionary<Client, List<Account>> GetClients(ClientFilter filter)
         {
-            var clientDict = _clientStorage.GetDictionary();
+            var clientDict = _clientStorage.Data;
 
             var result = clientDict.AsEnumerable();
 

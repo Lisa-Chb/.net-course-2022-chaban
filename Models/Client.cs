@@ -8,7 +8,7 @@ namespace Models
 {
     public class Client : Person
     {
-        public int AccountNumber { get; set; }
+        public int? AccountNumber { get; set; }
 
         public override bool Equals(object obj)
         {

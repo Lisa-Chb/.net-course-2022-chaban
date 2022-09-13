@@ -1,24 +1,48 @@
 ﻿using Models;
+using Services.Exceptions;
+using Services.Storages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
 {
-    public class EmployeeStorage
+    public class EmployeeStorage : IEmployeeStorage
     {
-        readonly List<Employee> employees = new List<Employee>();
+        public List<Employee> Data { get; }
 
-        public void AddNewEmployee(Employee employee)
+        public EmployeeStorage( List<Employee> initData)
         {
-            employees.Add(employee);
+            Data = initData;
         }
 
-        public List<Employee> GetEmployeeList()
+        public void Add(Employee employee)
         {
-            return employees;
+            if (Data.Contains(employee))
+                throw new PersonAlreadyExistException("Данный работник уже существует");
+
+            Data.Add(employee);
+        }
+        public void Delete(Employee employee)
+        {
+            if (!Data.Contains(employee))
+                throw new PersonDoesntExistException("Указанного работника не существует");
+
+             Data.Remove(employee);
+        }
+     
+        public void Update(Employee employee)
+        {         
+            var employeeToUpdate = Data.FirstOrDefault(s => s.NumberOfPassport == employee.NumberOfPassport);
+
+            if (!Data.Contains(employee))
+                throw new PersonDoesntExistException("Указанного сотрудника не существует");
+
+            Data.Remove(employeeToUpdate);
+            Data.Add(employee);
         }
     }
 }

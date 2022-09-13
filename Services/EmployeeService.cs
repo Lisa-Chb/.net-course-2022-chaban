@@ -1,6 +1,7 @@
 ﻿using Models;
 using Services.Exceptions;
 using Services.Filtres;
+using Services.Storages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace Services
 {
     public class EmployeeService
     {
-       private readonly EmployeeStorage _employeeStorage;
+       private readonly IEmployeeStorage _employeeStorage;
 
-        public EmployeeService (EmployeeStorage employeeStorage)
+        public EmployeeService (IEmployeeStorage employeeStorage)
         {
             _employeeStorage = employeeStorage;
         }
@@ -32,12 +33,12 @@ namespace Services
             if (string.IsNullOrEmpty(employee.Position))
                 throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
 
-            _employeeStorage.AddNewEmployee(employee);
+            _employeeStorage.Add(employee);
         }
 
         public List<Employee> GetEmployees(EmployeeFilter filter)
         {
-            var employeeList = _employeeStorage.GetEmployeeList();
+            var employeeList = _employeeStorage.Data;
 
             var result = employeeList.ToArray();
 
@@ -58,7 +59,6 @@ namespace Services
 
             if (filter.Position != null)
                 result = result.Where(x => x.Position == filter.Position).ToArray();
-
 
             return new List<Employee> (result);
         }   

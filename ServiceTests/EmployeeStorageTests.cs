@@ -18,7 +18,7 @@ namespace ServiceTests
         {
 
             //Arrange
-            var testEmployeeService = new EmployeeService(new EmployeeStorage());
+            var testEmployeeService = new EmployeeService(new EmployeeStorage(new List<Employee>()));
 
             var employeeJohn = new Employee();
             employeeJohn.FirstName = "John";
@@ -60,7 +60,7 @@ namespace ServiceTests
         public void SelectEmployeeWithNumberOfPassportTest()
         {
             //Arrange
-            var testEmployeeService = new EmployeeService(new EmployeeStorage());
+            var testEmployeeService = new EmployeeService(new EmployeeStorage(new List<Employee>()));
 
             var employeeJohn = new Employee();
             employeeJohn.FirstName = "John";
@@ -101,7 +101,7 @@ namespace ServiceTests
         public void SelectEmployeeWithDateRangeTest()
         {
             //Arrange
-            var testEmployeeService = new EmployeeService(new EmployeeStorage());
+            var testEmployeeService = new EmployeeService(new EmployeeStorage(new List<Employee>()));
 
             var employeeJohn = new Employee();
             employeeJohn.FirstName = "John";
@@ -144,7 +144,7 @@ namespace ServiceTests
         {
 
             //Arrange
-            var testEmployeeService = new EmployeeService(new EmployeeStorage());
+            var testEmployeeService = new EmployeeService(new EmployeeStorage(new List<Employee>()));
 
             var employeeJohn = new Employee();
             employeeJohn.FirstName = "John";

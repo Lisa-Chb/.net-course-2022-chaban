@@ -19,7 +19,7 @@ namespace ServiceTests
         public void SelectClientWithNameTest()
         {
             //Arrange
-            var testClientService = new ClientService(new ClientStorage());       
+            var testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));       
         
             var clientJohn = new Client();
             clientJohn.FirstName = "John";
@@ -55,7 +55,7 @@ namespace ServiceTests
         public void SelectClientWithNumberOfPassportTest()
         {
             //Arrange
-            var testClientService = new ClientService(new ClientStorage());
+            var testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
 
             var clientJohn = new Client();
             clientJohn.FirstName = "John";
@@ -90,7 +90,7 @@ namespace ServiceTests
         public void SelectClientWithDateRangeTest()
         {
             //Arrange
-            var testClientService = new ClientService(new ClientStorage());
+            var testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
 
             var clientJohn = new Client();
             clientJohn.FirstName = "John";
@@ -126,7 +126,7 @@ namespace ServiceTests
         public void SelectYoungerClientTest()
         {
             //Arrange
-            var testClientService = new ClientService(new ClientStorage());
+            var testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
 
             var clientJohn = new Client();
             clientJohn.FirstName = "John";
@@ -165,7 +165,7 @@ namespace ServiceTests
         public void SelectElderClientTest()
         {
             //Arrange
-            var testClientService = new ClientService(new ClientStorage());
+            var testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
 
             var clientJohn = new Client();
             clientJohn.FirstName = "John";
@@ -204,7 +204,7 @@ namespace ServiceTests
         public void SelectAverageClientAgeTest()
         {
             //Arrange
-            var testClientService = new ClientService(new ClientStorage());
+            var testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
 
             var clientJohn = new Client();
             clientJohn.FirstName = "John";
