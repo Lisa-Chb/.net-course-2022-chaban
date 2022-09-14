@@ -4,12 +4,7 @@ namespace Services
 {
     public class BankService<TPerson> where TPerson : Person
     {
-        private readonly List<TPerson> personBlackList;
-
-        public BankService(List<TPerson> personList)
-        {
-            this.personBlackList = personList;
-        }
+        private List<TPerson> _personBlackList = new List<TPerson>();   
 
         public void AddBonus(TPerson person)
         {
@@ -18,15 +13,13 @@ namespace Services
 
         public void AddToBlackList(TPerson person) 
         {
-           personBlackList.Add(person);
+           _personBlackList.Add(person);
         }
 
         public bool IsPersonInBlackList<TPerosn>(TPerson person)
         {
-            if (personBlackList.Contains(person))
-                return true;
-            else
-                return false;
+            return _personBlackList.Contains(person);
+               
         }
 
         public int CalculateOwnerSalary(int ownerCount, float bankProfit, float bankExpenses)

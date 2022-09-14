@@ -25,12 +25,13 @@ namespace Models
                 client.DateOfBirth == DateOfBirth &&
                 client.Phone == Phone &&
                 client.SeriesOfPassport == SeriesOfPassport &&
-                client.NumberOfPassport == NumberOfPassport;
+                client.NumberOfPassport == NumberOfPassport &&
+                client.BonusDiscount == BonusDiscount;
 
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine(FirstName, LastName, AccountNumber, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport);
+            return HashCode.Combine(FirstName, LastName, AccountNumber, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport, BonusDiscount);
         }
     }
 }

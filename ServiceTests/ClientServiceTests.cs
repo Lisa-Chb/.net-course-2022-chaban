@@ -23,7 +23,7 @@ namespace ServiceTests
             clientWithoutAge.NumberOfPassport = 356223435;
 
             //Act Assert
-            ClientService testClientService = new ClientService(new ClientStorage( new Dictionary<Client, List<Account>>()));
+            ClientService testClientService = new ClientService(new ClientStorage());
             Assert.Throws<PersonAgeValidationException>(() => testClientService.AddNewClient(clientWithoutAge));
         }
 
@@ -37,7 +37,7 @@ namespace ServiceTests
             clientWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
 
             //Act Assert
-            ClientService testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
+            ClientService testClientService = new ClientService(new ClientStorage());
             Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutSeriesOfPassort));
         }
 
@@ -51,7 +51,7 @@ namespace ServiceTests
             clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
             
             //Act Assert
-            ClientService testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
+            ClientService testClientService = new ClientService(new ClientStorage());
             Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutNumberOfPassort));
         }
 
@@ -60,7 +60,7 @@ namespace ServiceTests
         public void ClientAlreadyExistExceptionTest()
         {
             //Arrange
-            ClientService testClientService = new ClientService(new ClientStorage(new Dictionary<Client, List<Account>>()));
+            ClientService testClientService = new ClientService(new ClientStorage());
 
             var dictionaryClient = new Client();
             dictionaryClient.DateOfBirth = new DateTime(year: 1998, 5, 5);
@@ -73,6 +73,7 @@ namespace ServiceTests
             client.NumberOfPassport = 356223435;
 
             testClientService.AddNewClient(dictionaryClient);
+
 
             //Act Assert
             Assert.Throws<PersonAlreadyExistException>(() => testClientService.AddNewClient(client));

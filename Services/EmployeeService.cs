@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using Bogus.DataSets;
+using Models;
 using Services.Exceptions;
 using Services.Filtres;
 using Services.Storages;
@@ -21,6 +22,9 @@ namespace Services
 
         public void AddNewEmployee(Employee employee)
         {
+            if (_employeeStorage.Data.Contains(employee))
+                throw new PersonAlreadyExistException("Данный работник уже существует");
+
             if ((DateTime.Now - employee.DateOfBirth).Days / 365 < 18)
                 throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
 
@@ -34,6 +38,22 @@ namespace Services
                 throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
 
             _employeeStorage.Add(employee);
+        }
+
+        public void DeleteEmployee(Employee employee)
+        {
+            if (!_employeeStorage.Data.Contains(employee))
+                throw new PersonDoesntExistException("Указанного работника не существует");
+
+            _employeeStorage.Delete(employee);
+        }
+
+        public void UpdateEmployee(Employee employee)
+        {
+            if (!_employeeStorage.Data.Contains(employee))
+                throw new PersonDoesntExistException("Указанного сотрудника не существует");
+
+            _employeeStorage.Update(employee);
         }
 
         public List<Employee> GetEmployees(EmployeeFilter filter)
