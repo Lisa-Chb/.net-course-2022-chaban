@@ -74,8 +74,9 @@ namespace ServiceTests
 
             testClientService.AddNewClient(dictionaryClient);
 
+
             //Act Assert
-            Assert.Throws<ClientAlreadyExistException>(() => testClientService.AddNewClient(client));
+            Assert.Throws<PersonAlreadyExistException>(() => testClientService.AddNewClient(client));
         }
     }
 }

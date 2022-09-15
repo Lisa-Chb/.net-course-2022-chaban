@@ -14,7 +14,8 @@ namespace Models
         public int? NumberOfPassport { get; set; }
         public string SeriesOfPassport { get; set; }
         public string Phone  { get; set; }
-        public DateTime DateOfBirth { get; set; }       
+        public DateTime DateOfBirth { get; set; }         
+        public int BonusDiscount { get; set; }
 
     }
 }

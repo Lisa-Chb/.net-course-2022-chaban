@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Services.Exceptions
 {
-    public class ClientAlreadyExistException : Exception
+    public class PersonDoesntExistException : Exception
     {
-        public ClientAlreadyExistException(string message)
+        public PersonDoesntExistException(string message)
         : base(message) { }
     }
 }
