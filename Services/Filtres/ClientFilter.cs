@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
+
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Filtres
 {
@@ -19,5 +17,9 @@ namespace Services.Filtres
         public DateTime? MinDateTime { get; set; }
 
         public DateTime? MaxDateTime { get; set; }
+
+        public int Page { get; set; }
+
+        public int PageSize { get; set; }
     }
 }

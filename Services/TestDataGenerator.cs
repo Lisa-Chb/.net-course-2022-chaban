@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Models;
+using ModelsDb;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,15 +13,7 @@ namespace Services
         public Faker<Account> CreateAccount()
         {
             return new Faker<Account>()
-                 .RuleFor(x => x.Amount, f => f.Random.Int(100000, 999999))
-                 .RuleFor(x => x.Currency, f => new Currency(f.Random.ArrayElement(new[]
-                 {
-                    "RUB",
-                    "USD",
-                    "EUR",
-                    "MDL",
-                    "UAH"
-                 }), f.Random.Int(1000, 9999)));
+                 .RuleFor(x => x.Amount, f => f.Random.Int(100000, 999999));
         }
 
         public Dictionary<Client, List<Account>> CreateClientDictionaryWithAccount(List<Client> clients)
@@ -59,8 +52,8 @@ namespace Services
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())                
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue)) 
-                .RuleFor(x => x.AccountNumber, f => f.Random.Int(1000, 9999));
+                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue))
+                .RuleFor(x => x.NumberOfPassport, f => f.Random.Int(10000, 9999));
         }
 
         public Faker<Employee> CreateEmployeeListGenerator()

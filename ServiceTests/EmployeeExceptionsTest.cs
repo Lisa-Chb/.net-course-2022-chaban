@@ -11,7 +11,7 @@ using Services.Exceptions;
 namespace ServiceTests
 {
     public class EmployeeServiceTest
-    {
+    { /*
         [Fact]
 
         public void EmployeeAgeValidationExceptionTest()
@@ -76,6 +76,7 @@ namespace ServiceTests
             EmployeeService testEmployeeService = new EmployeeService(employeeStorage); ;
             Assert.Throws<EmployeePositionValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutPosition));
         }
+        */
     }
 }
 

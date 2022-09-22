@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Models
 {
-    public struct Currency
+    public class Currency
     {
+        public Guid CurrencyId { get; set; }
+        public Guid AccountId { get; set; }
+        public Account Account { get; set; }
         public string Name { get; set; }
         public int Code { get; set; }
-       public Currency(string Name, int Code)
-        {
-            this.Name = Name;
-            this.Code = Code;
-        }
     }
 }

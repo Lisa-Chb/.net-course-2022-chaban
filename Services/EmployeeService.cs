@@ -1,28 +1,33 @@
-﻿using Bogus.DataSets;
-using Models;
+﻿
+using Microsoft.EntityFrameworkCore;
+using ModelsDb;
 using Services.Exceptions;
 using Services.Filtres;
-using Services.Storages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WorkWithEntity.Data;
 
 namespace Services
 {
     public class EmployeeService
     {
-       private readonly IEmployeeStorage _employeeStorage;
+        readonly ApplicationContext _dbContext;
 
-        public EmployeeService (IEmployeeStorage employeeStorage)
+        public EmployeeService()
         {
-            _employeeStorage = employeeStorage;
+            _dbContext = new ApplicationContext();
         }
 
-        public void AddNewEmployee(Employee employee)
+        public Employee_db GetEmployee(Guid employeeId)
         {
-            if (_employeeStorage.Data.Contains(employee))
+            var employee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
+
+            if (employee == null)
+                throw new PersonDoesntExistException("Указанного сотрудника не сущетсвует");
+
+            return employee;
+        }
+        public void AddNewEmployee(Employee_db employee)
+        {
+            if (_dbContext.Employees.Contains(employee))
                 throw new PersonAlreadyExistException("Данный работник уже существует");
 
             if ((DateTime.Now - employee.DateOfBirth).Days / 365 < 18)
@@ -37,50 +42,69 @@ namespace Services
             if (string.IsNullOrEmpty(employee.Position))
                 throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
 
-            _employeeStorage.Add(employee);
+            _dbContext.Add(employee);
+            _dbContext.SaveChanges();
         }
 
-        public void DeleteEmployee(Employee employee)
+        public void DeleteEmployee(Guid employeeId)
         {
-            if (!_employeeStorage.Data.Contains(employee))
-                throw new PersonDoesntExistException("Указанного работника не существует");
+            var requiredEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
 
-            _employeeStorage.Delete(employee);
+            if (requiredEmployee == null)
+                throw new PersonDoesntExistException("Указанного сотрудника не сущетсвует");
+            else
+                _dbContext.Employees.Remove(requiredEmployee);
+
+            _dbContext.SaveChanges();
         }
 
-        public void UpdateEmployee(Employee employee)
+        public void UpdateEmployee(Employee_db employee)
         {
-            if (!_employeeStorage.Data.Contains(employee))
-                throw new PersonDoesntExistException("Указанного сотрудника не существует");
+            var priorEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employee.EmployeeId);
 
-            _employeeStorage.Update(employee);
+            if (!_dbContext.Employees.Contains(priorEmployee))
+                throw new PersonAlreadyExistException("Данного сотрудника не существует");
+
+            priorEmployee.FirstName = employee.FirstName;
+            priorEmployee.LastName = employee.LastName;
+            priorEmployee.NumberOfPassport = employee.NumberOfPassport;
+            priorEmployee.SeriesOfPassport = employee.SeriesOfPassport;
+            priorEmployee.Phone = priorEmployee.Phone;
+            priorEmployee.Position = employee.Position;
+            priorEmployee.Salary = employee.Salary;
+            priorEmployee.DateOfBirth = employee.DateOfBirth;
+            priorEmployee.Contract = employee.Contract;
+            priorEmployee.BonusDiscount = priorEmployee.BonusDiscount;
+            
+            _dbContext.SaveChanges();
         }
 
-        public List<Employee> GetEmployees(EmployeeFilter filter)
-        {
-            var employeeList = _employeeStorage.Data;
 
-            var result = employeeList.ToArray();
+        public List<Employee_db> GetEmployees(EmployeeFilter filter)
+        {
+            var employees = _dbContext.Employees.AsQueryable();
 
             if (filter.FirstName != null)
-                result = result.Where(s => s.FirstName == filter.FirstName).ToArray();
+                employees = employees.Where(s => s.FirstName == filter.FirstName);
 
             if (filter.LastName != null)
-                result = result.Where(s => s.LastName == filter.LastName).ToArray();
+                employees = employees.Where(s => s.LastName == filter.LastName);
 
             if (filter.NumberOfPassport != null)
-                result = result.Where(s => s.NumberOfPassport == filter.NumberOfPassport).ToArray();
+                employees = employees.Where(s => s.NumberOfPassport == filter.NumberOfPassport);
 
             if (filter.MinDateTime != null)
-                result = result.Where(s => s.DateOfBirth >= filter.MinDateTime).ToArray();
+                employees = employees.Where(s => s.DateOfBirth >= filter.MinDateTime);
 
             if (filter.MaxDateTime != null)
-                result = result.Where(s => s.DateOfBirth <= filter.MaxDateTime).ToArray();
+                employees = employees.Where(s => s.DateOfBirth <= filter.MaxDateTime);
 
             if (filter.Position != null)
-                result = result.Where(x => x.Position == filter.Position).ToArray();
+                employees = employees.Where(x => x.Position == filter.Position);
 
-            return new List<Employee> (result);
-        }   
+            var paginatedEmployees = employees.Skip((filter.Page - 1)* filter.PageSize).Take(filter.PageSize).ToList();
+
+            return paginatedEmployees;
+        }
     }
 }

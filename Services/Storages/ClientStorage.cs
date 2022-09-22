@@ -16,10 +16,10 @@ namespace Services
 
         public void Add(Client client)
         {
+            
+            var account = new Account();
             var currency = new Currency();
             currency.Name = "USD";
-
-            var account = new Account();
             account.Currency = currency;
             var newAcccountList = new List<Account>();
             newAcccountList.Add(account);

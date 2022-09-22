@@ -12,6 +12,7 @@ namespace ServiceTests
 {
     public class EmployeeStorageTests
     {
+        /*
         [Fact]
 
         public void SelectEmployeeWithNameTest()
@@ -178,6 +179,8 @@ namespace ServiceTests
 
             //Act Assert
             Assert.Equal(testEmployeeService.GetEmployees(filter), expectedList);
-        }
+        }*/
     }
 }
+    
+
