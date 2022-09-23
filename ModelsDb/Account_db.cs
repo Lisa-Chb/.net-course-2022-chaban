@@ -1,4 +1,5 @@
 ﻿using Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
@@ -7,6 +8,7 @@ namespace ModelsDb
     [Table(name:"accounts")]
     public class Account_db
     {
+        [Key]
         [Column(name: "account_id")]
         public Guid AccountId { get; set; }
 

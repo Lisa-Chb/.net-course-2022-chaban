@@ -1,9 +1,9 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using ModelsDb;
+using ModelsDb.Data;
 using Services.Exceptions;
 using Services.Filtres;
-using WorkWithEntity.Data;
 
 namespace Services
 {

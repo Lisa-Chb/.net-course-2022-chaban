@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ModelsDb\ModelsDb.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\WorkWithEntity\WorkWithEntity.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,17 +1,7 @@
-﻿using Bogus;
-using Models;
-using Services;
-using Services.Filtres;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-
+﻿
 namespace ServiceTests
-{/*
+{
+    /*
     public class ClientStorageTest 
     {
         [Fact]
@@ -33,14 +23,14 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(2000, 5, 6);
-            testClientService.AddNewClient(clientJohnToo);
+            testClientService.AddClient(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.FirstName = "Emily";
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 2367;
             clientEmily.DateOfBirth = new DateTime(2000, 5, 6);
-            testClientService.AddNewClient(clientEmily);
+            testClientService.AddClient(clientEmily);
 
             var filter = new ClientFilter();
             filter.FirstName = "John";
@@ -62,21 +52,21 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6);
-            testClientService.AddNewClient(clientJohn);
+            testClientService.AddClient(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.FirstName = "Dave";
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(1999, 5, 6);
-            testClientService.AddNewClient(clientJohnToo);
+            testClientService.AddClient(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.FirstName = "Emily";
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 6865;
             clientEmily.DateOfBirth = new DateTime(1998, 5, 6);
-            testClientService.AddNewClient(clientEmily);
+            testClientService.AddClient(clientEmily);
 
             var filter = new ClientFilter();
             filter.NumberOfPassport = 2367;
@@ -236,6 +226,7 @@ namespace ServiceTests
 
             //Assert
             Assert.Equal(averageAge, 45);
-        }
-    }*/
+            */
 }
+    
+

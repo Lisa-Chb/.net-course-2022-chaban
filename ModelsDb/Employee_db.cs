@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Numerics;
 
 namespace ModelsDb
@@ -33,7 +34,7 @@ namespace ModelsDb
         [Column(name: "bonus_discount")]
         public int BonusDiscount { get; set; }
 
-
+        [Key]
         [Column(name: "employee_Id")]
         public Guid EmployeeId { get; set; }
 

@@ -4,22 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ModelsDb.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WorkWithEntity.Data;
 
 #nullable disable
 
 namespace WorkWithEntity.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220919083647_Init")]
-    partial class Init
+    [Migration("20220921193740_UpdateCurrencyToClass")]
+    partial class UpdateCurrencyToClass
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -83,6 +83,30 @@ namespace WorkWithEntity.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("Models.Currency", b =>
+                {
+                    b.Property<Guid>("CurrencyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Code")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("CurrencyId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.ToTable("Currency");
+                });
+
             modelBuilder.Entity("Models.Employee", b =>
                 {
                     b.Property<Guid>("EmployeeId")
@@ -139,6 +163,23 @@ namespace WorkWithEntity.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Models.Currency", b =>
+                {
+                    b.HasOne("Models.Account", "Account")
+                        .WithOne("Currency")
+                        .HasForeignKey("Models.Currency", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("Models.Account", b =>
+                {
+                    b.Navigation("Currency")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Models.Client", b =>

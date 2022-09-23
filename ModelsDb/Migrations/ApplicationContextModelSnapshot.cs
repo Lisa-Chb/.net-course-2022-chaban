@@ -2,20 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ModelsDb.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WorkWithEntity.Data;
 
 #nullable disable
 
 namespace WorkWithEntity.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220921194808_fixAccount")]
-    partial class fixAccount
+    partial class ApplicationContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,135 +22,161 @@ namespace WorkWithEntity.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.Account", b =>
+            modelBuilder.Entity("ModelsDb.Account_db", b =>
                 {
                     b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("account_id");
 
                     b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("amount");
 
                     b.Property<Guid>("Clientid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
 
                     b.HasKey("AccountId");
 
                     b.HasIndex("Clientid");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("accounts");
                 });
 
-            modelBuilder.Entity("Models.Client", b =>
+            modelBuilder.Entity("ModelsDb.Client_db", b =>
                 {
                     b.Property<Guid>("ClientId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_Id");
 
                     b.Property<int>("BonusDiscount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("bonus_discount");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_of_birth");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
 
                     b.Property<int?>("NumberOfPassport")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("number_of_passport");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
 
                     b.Property<string>("SeriesOfPassport")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("series_of_passport");
 
                     b.HasKey("ClientId");
 
-                    b.ToTable("Clients");
+                    b.ToTable("clients");
                 });
 
-            modelBuilder.Entity("Models.Currency", b =>
+            modelBuilder.Entity("ModelsDb.Currency_db", b =>
                 {
                     b.Property<Guid>("CurrencyId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("currency_Id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("account_Id");
 
                     b.Property<int>("Code")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("code");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.HasKey("CurrencyId");
 
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Currency");
+                    b.ToTable("currences");
                 });
 
-            modelBuilder.Entity("Models.Employee", b =>
+            modelBuilder.Entity("ModelsDb.Employee_db", b =>
                 {
                     b.Property<Guid>("EmployeeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("employee_Id");
 
                     b.Property<int>("BonusDiscount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("bonus_discount");
 
                     b.Property<string>("Contract")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("contract");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_of_birth");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
 
                     b.Property<int?>("NumberOfPassport")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("number_of_passport");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
 
                     b.Property<string>("Position")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("position");
 
                     b.Property<int>("Salary")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("salary");
 
                     b.Property<string>("SeriesOfPassport")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("series_of_passport");
 
                     b.HasKey("EmployeeId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("employee");
                 });
 
-            modelBuilder.Entity("Models.Account", b =>
+            modelBuilder.Entity("ModelsDb.Account_db", b =>
                 {
-                    b.HasOne("Models.Client", "Client")
+                    b.HasOne("ModelsDb.Client_db", "Client")
                         .WithMany("Accounts")
                         .HasForeignKey("Clientid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -161,24 +185,24 @@ namespace WorkWithEntity.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("Models.Currency", b =>
+            modelBuilder.Entity("ModelsDb.Currency_db", b =>
                 {
-                    b.HasOne("Models.Account", "Account")
+                    b.HasOne("ModelsDb.Account_db", "Account")
                         .WithOne("Currency")
-                        .HasForeignKey("Models.Currency", "AccountId")
+                        .HasForeignKey("ModelsDb.Currency_db", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("Models.Account", b =>
+            modelBuilder.Entity("ModelsDb.Account_db", b =>
                 {
                     b.Navigation("Currency")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Models.Client", b =>
+            modelBuilder.Entity("ModelsDb.Client_db", b =>
                 {
                     b.Navigation("Accounts");
                 });

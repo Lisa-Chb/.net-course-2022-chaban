@@ -1,10 +1,10 @@
 ﻿
 using Bogus.DataSets;
 using ModelsDb;
+using ModelsDb.Data;
 using Services.Exceptions;
 using Services.Filtres;
 using Services.Storages;
-using WorkWithEntity.Data;
 using Currency = ModelsDb.Currency_db;
 
 namespace Services
@@ -25,8 +25,8 @@ namespace Services
 
         public List<Client_db> GetClients(ClientFilter filter)
         {
-            var clients = _dbContext.Clients.AsQueryable();         
-          
+            var clients = _dbContext.Clients.AsQueryable();
+
             if (filter.FirstName != null)
                 clients = clients.Where(s => s.FirstName == filter.FirstName);
 
@@ -60,17 +60,65 @@ namespace Services
             if (client.NumberOfPassport == null)
                 throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            var newAccount = new Account_db();
-            newAccount.AccountId = Guid.NewGuid();
-            newAccount.Clientid = client.ClientId;
-            
-            var currency = new Currency();
-            currency.Name = "RUB";
-            newAccount.Currency = currency;
+            var newAccount = new Account_db
+            {
+                AccountId = Guid.NewGuid(),
+                Clientid = client.ClientId
+            };
+
+            var currency = new Currency_db()
+            {
+                Name = "RUB",
+                CurrencyId = Guid.NewGuid(),
+                AccountId = newAccount.AccountId
+            };
+
+            _dbContext.Currency.Add(currency);
+            _dbContext.Accounts.Add(newAccount);
+            _dbContext.Clients.Add(client);
 
             client.Accounts.Add(newAccount);
 
             _dbContext.Clients.Add(client);
+            _dbContext.SaveChanges();
+        }
+
+        public void AddClient(List<Client_db> clients)
+        {
+            foreach (var client in clients)
+            {
+                if (_dbContext.Clients.Contains(client))
+                    throw new PersonAlreadyExistException("Данный клиент уже существует");
+
+                if (((DateTime.Now - client.DateOfBirth).Days / 365) < 18)
+                    throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
+
+                if (string.IsNullOrEmpty(client.SeriesOfPassport))
+                    throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+
+                if (client.NumberOfPassport == null)
+                    throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+
+                
+                var newAccount = new Account_db()
+                {
+                    AccountId = Guid.NewGuid(),
+                    Clientid = client.ClientId
+                };
+
+
+                var currency = new Currency_db()
+                {
+                    Name = "RUB",
+                    CurrencyId = Guid.NewGuid(),
+                    AccountId = newAccount.AccountId
+                };
+                
+               // client.Accounts = null;
+                _dbContext.Currency.Add(currency);
+                _dbContext.Accounts.Add(newAccount);
+                _dbContext.Clients.Add(client);
+            }
             _dbContext.SaveChanges();
         }
 
@@ -80,7 +128,7 @@ namespace Services
 
             if (!_dbContext.Clients.Contains(priorClient))
                 throw new PersonAlreadyExistException("Данного клиента не существует");
-    
+
             priorClient.FirstName = client.FirstName;
             priorClient.LastName = client.LastName;
             priorClient.NumberOfPassport = client.NumberOfPassport;
@@ -104,13 +152,13 @@ namespace Services
 
             _dbContext.SaveChanges();
         }
-       
+
         public void AddAccount(Guid clientId, Account_db account)
         {
             if ((account.Clientid != Guid.Empty) && (account.Clientid != clientId))
                 throw new AccountDoesntExistException("Данный аккаунт привязан к другому клиенту или не существует");
 
-            if(account.Clientid == Guid.Empty)
+            if (account.Clientid == Guid.Empty)
                 account.Clientid = clientId;
 
             _dbContext.Accounts.Add(account);

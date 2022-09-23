@@ -2,18 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ModelsDb.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WorkWithEntity.Data;
 
 #nullable disable
 
 namespace WorkWithEntity.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220923200947_FixKeys")]
+    partial class FixKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,7 @@ namespace WorkWithEntity.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ModelsDb.Account", b =>
+            modelBuilder.Entity("ModelsDb.Account_db", b =>
                 {
                     b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
@@ -44,7 +46,7 @@ namespace WorkWithEntity.Migrations
                     b.ToTable("accounts");
                 });
 
-            modelBuilder.Entity("ModelsDb.Client", b =>
+            modelBuilder.Entity("ModelsDb.Client_db", b =>
                 {
                     b.Property<Guid>("ClientId")
                         .ValueGeneratedOnAdd()
@@ -58,10 +60,6 @@ namespace WorkWithEntity.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_of_birth");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("client_Id");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -92,7 +90,7 @@ namespace WorkWithEntity.Migrations
                     b.ToTable("clients");
                 });
 
-            modelBuilder.Entity("ModelsDb.Currency", b =>
+            modelBuilder.Entity("ModelsDb.Currency_db", b =>
                 {
                     b.Property<Guid>("CurrencyId")
                         .ValueGeneratedOnAdd()
@@ -120,7 +118,7 @@ namespace WorkWithEntity.Migrations
                     b.ToTable("currences");
                 });
 
-            modelBuilder.Entity("ModelsDb.Employee", b =>
+            modelBuilder.Entity("ModelsDb.Employee_db", b =>
                 {
                     b.Property<Guid>("EmployeeId")
                         .ValueGeneratedOnAdd()
@@ -178,9 +176,9 @@ namespace WorkWithEntity.Migrations
                     b.ToTable("employee");
                 });
 
-            modelBuilder.Entity("ModelsDb.Account", b =>
+            modelBuilder.Entity("ModelsDb.Account_db", b =>
                 {
-                    b.HasOne("ModelsDb.Client", "Client")
+                    b.HasOne("ModelsDb.Client_db", "Client")
                         .WithMany("Accounts")
                         .HasForeignKey("Clientid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -189,24 +187,24 @@ namespace WorkWithEntity.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("ModelsDb.Currency", b =>
+            modelBuilder.Entity("ModelsDb.Currency_db", b =>
                 {
-                    b.HasOne("ModelsDb.Account", "Account")
+                    b.HasOne("ModelsDb.Account_db", "Account")
                         .WithOne("Currency")
-                        .HasForeignKey("ModelsDb.Currency", "AccountId")
+                        .HasForeignKey("ModelsDb.Currency_db", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("ModelsDb.Account", b =>
+            modelBuilder.Entity("ModelsDb.Account_db", b =>
                 {
                     b.Navigation("Currency")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ModelsDb.Client", b =>
+            modelBuilder.Entity("ModelsDb.Client_db", b =>
                 {
                     b.Navigation("Accounts");
                 });

@@ -1,9 +1,6 @@
 ﻿using Models;
-using Services.Exceptions;
-using Services.Storages;
-using System.Runtime.Intrinsics.X86;
 
-namespace Services
+namespace Services.Storages
 {
     public class ClientStorage : IClientStorage
     {

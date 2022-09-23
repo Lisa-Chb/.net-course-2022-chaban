@@ -10,10 +10,26 @@ namespace Services
 {
     public class TestDataGenerator
     {
+        public Faker<Currency> CreateCurrency()
+        {
+            return new Faker<Currency>()
+                 .RuleFor(x => x.CurrencyId, f => Guid.NewGuid())
+                 .RuleFor(x => x.Code, f => f.Random.Int(1000000, 9999999))
+                 .RuleFor(x => x.Name, f => f.Random.ArrayElement(new[]
+                 {
+                     "USD",
+                     "RUB"
+                 }));
+        }
         public Faker<Account> CreateAccount()
         {
+            Faker<Currency> generatorCurrency = CreateCurrency();
+            Currency currency = generatorCurrency.Generate(1)[0];
+
             return new Faker<Account>()
-                 .RuleFor(x => x.Amount, f => f.Random.Int(100000, 999999));
+                 .RuleFor(x => x.Currency, f => currency)
+                 .RuleFor(x => x.Amount, f => f.Random.Int(1000000, 9999999))
+                 .RuleFor(x => x.AccountId, f => Guid.NewGuid());
         }
 
         public Dictionary<Client, List<Account>> CreateClientDictionaryWithAccount(List<Client> clients)
@@ -48,13 +64,20 @@ namespace Services
         }
         public Faker<Client> CreateClientListGenerator()
         {
+            Faker<Account> generatorAccount = CreateAccount();
+            List<Account> accounts = generatorAccount.Generate(2);         
+
             return new Faker<Client>("ru")
+                .RuleFor(x => x.ClientId, f => Guid.NewGuid())
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())                
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue))
-                .RuleFor(x => x.NumberOfPassport, f => f.Random.Int(10000, 9999));
+                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue).ToUniversalTime())
+                .RuleFor(x => x.NumberOfPassport, f => f.Random.Int(10000, 99999))
+                .RuleFor(x => x.SeriesOfPassport, f => f.Random.Int(100000, 999999).ToString());
         }
+        
+        
 
         public Faker<Employee> CreateEmployeeListGenerator()
         {
