@@ -58,8 +58,9 @@ namespace ServiceTests
 
             var filter = new ClientFilter
             {
-                FirstName = "Tom",
-                PageSize = 1
+               FirstName = "Tom",
+                PageSize = 1,
+                //BonusDiscount = 1,
             };
 
             var listTom = new List<Client_db> {
@@ -82,7 +83,7 @@ namespace ServiceTests
                 NumberOfPassport = 6854,
                 SeriesOfPassport = "657778",
                 ClientId = Guid.NewGuid(),
-                BonusDiscount = 0,
+                BonusDiscount = 5,
                 DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime(),
              }
             };
@@ -91,6 +92,7 @@ namespace ServiceTests
             //Act
             service.AddClient(ClientMapping(clients));
             service.AddClient(listTom);
+           // var clientsOrderBy = service.GetClients(filter);
 
             //Assert
             Assert.True(service.GetClients(filter).Count == 1);

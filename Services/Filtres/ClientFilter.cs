@@ -18,6 +18,10 @@ namespace Services.Filtres
 
         public DateTime? MaxDateTime { get; set; }
 
+        public int? BonusDiscount { get; set; }
+
+        public string CurrencyName { get; set; }
+
         public int Page { get; set; } = 1;
 
         public int PageSize { get; set; }

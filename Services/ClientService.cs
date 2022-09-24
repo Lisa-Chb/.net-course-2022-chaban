@@ -1,11 +1,9 @@
 ﻿
-using Bogus.DataSets;
-using Models;
+using Microsoft.EntityFrameworkCore;
 using ModelsDb;
 using ModelsDb.Data;
 using Services.Exceptions;
 using Services.Filtres;
-using Currency = ModelsDb.Currency_db;
 
 namespace Services
 {
@@ -48,10 +46,14 @@ namespace Services
             if (filter.MaxDateTime != null)
                 clients = clients.Where(s => s.DateOfBirth >= filter.MaxDateTime);
 
+            /* if (filter.BonusDiscount != null)
+                 clients = clients.OrderBy(s => s.BonusDiscount);*/
+
             var paginatedClients = clients.Skip(filter.Page - 1).Take(filter.PageSize).ToList();
 
             return paginatedClients;
         }
+
         public void AddClient(Client_db client)
         {
             if (_dbContext.Clients.Contains(client))
