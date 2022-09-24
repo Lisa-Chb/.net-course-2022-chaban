@@ -57,12 +57,15 @@ namespace ModelsDb
                 client.Phone == Phone &&
                 client.SeriesOfPassport == SeriesOfPassport &&
                 client.NumberOfPassport == NumberOfPassport &&
-                client.BonusDiscount == BonusDiscount;
+                client.BonusDiscount == BonusDiscount &&
+                client.ClientId == ClientId &&
+                client.Accounts == Accounts;
 
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport, BonusDiscount);
+            var hashCode =  HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport, Accounts, ClientId);
+            return hashCode + BonusDiscount;
         }
     }
 

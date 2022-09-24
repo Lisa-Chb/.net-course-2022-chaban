@@ -1,10 +1,10 @@
 ﻿
 using Bogus.DataSets;
+using Models;
 using ModelsDb;
 using ModelsDb.Data;
 using Services.Exceptions;
 using Services.Filtres;
-using Services.Storages;
 using Currency = ModelsDb.Currency_db;
 
 namespace Services
@@ -20,11 +20,17 @@ namespace Services
 
         public Client_db GetClient(Guid clientId)
         {
+            var client = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
+
+            if (client == null)
+                throw new PersonDoesntExistException("Указанного клиента не сущетсвует");
+
             return _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
         }
 
         public List<Client_db> GetClients(ClientFilter filter)
         {
+
             var clients = _dbContext.Clients.AsQueryable();
 
             if (filter.FirstName != null)
@@ -76,10 +82,6 @@ namespace Services
             _dbContext.Currency.Add(currency);
             _dbContext.Accounts.Add(newAccount);
             _dbContext.Clients.Add(client);
-
-            client.Accounts.Add(newAccount);
-
-            _dbContext.Clients.Add(client);
             _dbContext.SaveChanges();
         }
 
@@ -114,7 +116,6 @@ namespace Services
                     AccountId = newAccount.AccountId
                 };
                 
-               // client.Accounts = null;
                 _dbContext.Currency.Add(currency);
                 _dbContext.Accounts.Add(newAccount);
                 _dbContext.Clients.Add(client);
@@ -153,13 +154,19 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public void AddAccount(Guid clientId, Account_db account)
+        public Account_db GetAccount(Guid accountId)
         {
-            if ((account.Clientid != Guid.Empty) && (account.Clientid != clientId))
-                throw new AccountDoesntExistException("Данный аккаунт привязан к другому клиенту или не существует");
+            var account = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
 
-            if (account.Clientid == Guid.Empty)
-                account.Clientid = clientId;
+            if (account == null)
+                throw new AccountDoesntExistException("Указанного аккаунта не сущетсвует");
+
+            return _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
+        }
+        public void AddAccount(Account_db account)
+        {
+            if (account.Clientid == null)
+                throw new AccountDoesntExistException("Данный аккаунт не привязан ни к одному клиенту");
 
             _dbContext.Accounts.Add(account);
             _dbContext.SaveChanges();
@@ -178,7 +185,7 @@ namespace Services
             var priorAccount = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == account.AccountId);
             var accountOwner = _dbContext.Clients.FirstOrDefault(c => c.ClientId == priorAccount.Clientid);
 
-            if (!accountOwner.Accounts.Contains(account))
+            if (!accountOwner.Accounts.Select(x => x.Clientid).Contains(priorAccount.Clientid))
                 throw new PersonAlreadyExistException("Данного аккаунта не существует");
 
             priorAccount.Currency = account.Currency;

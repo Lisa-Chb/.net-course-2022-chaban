@@ -61,6 +61,9 @@ namespace ModelsDb
                 employee.DateOfBirth == DateOfBirth &&
                 employee.Phone == Phone &&
                 employee.SeriesOfPassport == SeriesOfPassport &&
+                employee.NumberOfPassport == NumberOfPassport &&
+                employee.EmployeeId == EmployeeId &&
+                employee.BonusDiscount == BonusDiscount &&
                 employee.Position == Position &&
                 employee.Contract == Contract &&
                 employee.Salary == Salary;
@@ -68,9 +71,9 @@ namespace ModelsDb
 
         public override int GetHashCode()
         {
-            var hashCode1 = HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, Position, Contract);
-            return hashCode1 + Salary;
+            var hashCode1 = HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, Position, Contract, NumberOfPassport);
+            var hashCode2 = HashCode.Combine(EmployeeId, BonusDiscount, Salary);
+            return hashCode1 + hashCode2;
         }
-
     }
 }

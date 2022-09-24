@@ -46,6 +46,31 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
+        public void AddNewEmployee(List<Employee_db> employees)
+        {
+            foreach (var employee in employees)
+            {
+                if (_dbContext.Employees.Contains(employee))
+                    throw new PersonAlreadyExistException("Данный работник уже существует");
+
+                if ((DateTime.Now - employee.DateOfBirth).Days / 365 < 18)
+                    throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
+
+                if (string.IsNullOrEmpty(employee.SeriesOfPassport))
+                    throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+
+                if (employee.NumberOfPassport == null)
+                    throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+
+                if (string.IsNullOrEmpty(employee.Position))
+                    throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
+
+                _dbContext.Add(employee);
+            }
+
+            _dbContext.SaveChanges();
+        }
+
         public void DeleteEmployee(Guid employeeId)
         {
             var requiredEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
@@ -69,12 +94,12 @@ namespace Services
             priorEmployee.LastName = employee.LastName;
             priorEmployee.NumberOfPassport = employee.NumberOfPassport;
             priorEmployee.SeriesOfPassport = employee.SeriesOfPassport;
-            priorEmployee.Phone = priorEmployee.Phone;
+            priorEmployee.Phone = employee.Phone;
             priorEmployee.Position = employee.Position;
             priorEmployee.Salary = employee.Salary;
             priorEmployee.DateOfBirth = employee.DateOfBirth;
             priorEmployee.Contract = employee.Contract;
-            priorEmployee.BonusDiscount = priorEmployee.BonusDiscount;
+            priorEmployee.BonusDiscount = employee.BonusDiscount;
             
             _dbContext.SaveChanges();
         }

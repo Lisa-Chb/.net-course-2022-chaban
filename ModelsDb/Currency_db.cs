@@ -1,6 +1,9 @@
 ﻿
+using Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.Contracts;
+using System.Numerics;
 
 namespace ModelsDb
 {
@@ -26,5 +29,26 @@ namespace ModelsDb
 
         [Column(name: "code")]
         public int Code { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            if (!(obj is Currency_db))
+                return false;
+
+            var currency = (Currency_db)obj;
+            return currency.CurrencyId == CurrencyId &&
+                currency.AccountId == AccountId &&
+                currency.Account == Account &&
+                currency.Code == Code &&
+                currency.Name == Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(CurrencyId, Account, AccountId, Code, Name);         
+        }
     }
 }

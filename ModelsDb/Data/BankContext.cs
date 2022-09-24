@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Reflection.Metadata;
 
 namespace ModelsDb.Data
@@ -16,6 +17,7 @@ namespace ModelsDb.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Superliza228");
+            optionsBuilder.LogTo(s => Debug.WriteLine(s));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

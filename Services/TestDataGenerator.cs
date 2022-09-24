@@ -72,7 +72,7 @@ namespace Services
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())                
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue).ToUniversalTime())
+                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1940, 1, 1), new DateOnly(2003, 1, 1)).ToDateTime(TimeOnly.MinValue).ToUniversalTime())
                 .RuleFor(x => x.NumberOfPassport, f => f.Random.Int(10000, 99999))
                 .RuleFor(x => x.SeriesOfPassport, f => f.Random.Int(100000, 999999).ToString());
         }
@@ -85,8 +85,11 @@ namespace Services
                 .RuleFor(x => x.FirstName, f => f.Name.LastName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())
                 .RuleFor(x => x.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1920, 1, 1), new DateOnly(2005, 1, 1)).ToDateTime(TimeOnly.MinValue))
+                .RuleFor(x => x.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(1940, 1, 1), new DateOnly(2003, 1, 1)).ToDateTime(TimeOnly.MinValue).ToUniversalTime())
                 .RuleFor(x => x.Salary, f => f.Random.Int(5000, 20000))
+                .RuleFor(x => x.NumberOfPassport, f => f.Random.Int(10000, 99999))
+                .RuleFor(x => x.SeriesOfPassport, f => f.Random.Int(100000, 999999).ToString())
+                .RuleFor(x => x.Contract, f => "Принят на работу")
                 .RuleFor(x => x.Position, f => f.Random.ArrayElement(new[] 
                 {
                             "Программист",
