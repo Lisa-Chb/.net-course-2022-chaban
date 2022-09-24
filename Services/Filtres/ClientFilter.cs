@@ -20,8 +20,6 @@ namespace Services.Filtres
 
         public int? BonusDiscount { get; set; }
 
-        public string CurrencyName { get; set; }
-
         public int Page { get; set; } = 1;
 
         public int PageSize { get; set; }
