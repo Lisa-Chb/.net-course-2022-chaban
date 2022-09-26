@@ -6,8 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ModelsDb
 {
     [Table(name: "clients")]
-    public class Client_db
+    public class ClientDb
     {
+        [Key]
+        [Column(name: "client_Id")]
+        public Guid ClientId { get; set; }
+
+
         [Column(name: "first_name")]
         public string FirstName { get; set; }
 
@@ -35,22 +40,19 @@ namespace ModelsDb
         [Column(name: "bonus_discount")]
         public int BonusDiscount { get; set; }
 
-        [Key]
-        [Column(name: "client_Id")]
-        public Guid ClientId { get; set; }
 
         [Column(name: "accounts")]
-        public List<Account_db> Accounts { get; set; }
+        public List<AccountDb> Accounts { get; set; }
 
         public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
 
-            if (!(obj is Client_db))
+            if (!(obj is ClientDb))
                 return false;
 
-            var client = (Client_db)obj;
+            var client = (ClientDb)obj;
             return client.FirstName == FirstName &&
                 client.LastName == LastName &&
                 client.DateOfBirth == DateOfBirth &&
@@ -60,7 +62,6 @@ namespace ModelsDb
                 client.BonusDiscount == BonusDiscount &&
                 client.ClientId == ClientId &&
                 client.Accounts == Accounts;
-
         }
         public override int GetHashCode()
         {

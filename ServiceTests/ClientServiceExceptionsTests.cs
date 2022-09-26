@@ -14,14 +14,14 @@ namespace ServiceTests
         public void ClientAgeValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutAge= new Client();
+            var clientWithoutAge= new ClientDb();
             clientWithoutAge.DateOfBirth = new DateTime(year: 2007, 5, 6);
             clientWithoutAge.SeriesOfPassport = "I-ПР";
             clientWithoutAge.NumberOfPassport = 356223435;
 
             //Act Assert
             ClientService testClientService = new ClientService();
-            Assert.Throws<PersonAgeValidationException>(() => testClientService.AddClient(ClientMapping(clientWithoutAge)));
+            Assert.Throws<PersonAgeValidationException>(() => testClientService.AddClient(clientWithoutAge));
         }
 
         [Fact]
@@ -29,13 +29,13 @@ namespace ServiceTests
         public void ClientSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutSeriesOfPassort = new Client();
+            var clientWithoutSeriesOfPassort = new ClientDb();
             clientWithoutSeriesOfPassort.NumberOfPassport = 356223435;
             clientWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
 
             //Act Assert
             ClientService testClientService = new ClientService();
-            Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddClient(ClientMapping(clientWithoutSeriesOfPassort)));
+            Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddClient(clientWithoutSeriesOfPassort));
         }
 
         [Fact]
@@ -43,13 +43,13 @@ namespace ServiceTests
         public void ClientNumberOfPassportValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutNumberOfPassort = new Client();
+            var clientWithoutNumberOfPassort = new ClientDb();
             clientWithoutNumberOfPassort.DateOfBirth = new DateTime(year:1998, 5, 5);
             clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
             
             //Act Assert
-            ClientService testClientService = new ClientService();
-            Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddClient(ClientMapping(clientWithoutNumberOfPassort)));
+            var testClientService = new ClientService();
+            Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddClient(clientWithoutNumberOfPassort));
         }
 
         [Fact]
@@ -57,9 +57,8 @@ namespace ServiceTests
         public void ClientAlreadyExistExceptionTest()
         {
             //Arrange
-            ClientService testClientService = new ClientService();
-
-            var dictionaryClient = new Client();
+            var testClientService = new ClientService();
+            var dictionaryClient = new ClientDb();
             dictionaryClient.FirstName = "John";
             dictionaryClient.LastName = "Johanson";
             dictionaryClient.Phone = "66748563";
@@ -68,7 +67,7 @@ namespace ServiceTests
             dictionaryClient.NumberOfPassport = 356223435;
             dictionaryClient.ClientId = Guid.NewGuid();
 
-            var client = new Client();
+            var client = new ClientDb();
             dictionaryClient.FirstName = "John";
             dictionaryClient.LastName = "Johanson";
             dictionaryClient.Phone = "66748563";
@@ -77,28 +76,11 @@ namespace ServiceTests
             client.NumberOfPassport = 356223435;
             client.ClientId = dictionaryClient.ClientId;
 
-            testClientService.AddClient(ClientMapping(dictionaryClient));
+            testClientService.AddClient(dictionaryClient);
 
 
             //Act Assert
-            Assert.Throws<PersonAlreadyExistException>(() => testClientService.AddClient(ClientMapping(client)));
-        }
-
-        private Client_db ClientMapping(Client client)
-        {
-            var client_Db = new Client_db
-            {
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                NumberOfPassport = client.NumberOfPassport,
-                SeriesOfPassport = client.SeriesOfPassport,
-                Phone = client.Phone,
-                DateOfBirth = client.DateOfBirth,
-                BonusDiscount = client.BonusDiscount,
-                ClientId = client.ClientId,
-            }; 
-                           
-            return client_Db;
-        }
+            Assert.Throws<PersonAlreadyExistException>(() => testClientService.AddClient(client));
+        }      
     }
 }

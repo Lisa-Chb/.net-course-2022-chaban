@@ -16,17 +16,17 @@ namespace Services
             _dbContext = new ApplicationContext();
         }
 
-        public Client_db GetClient(Guid clientId)
+        public ClientDb GetClient(Guid clientId)
         {
             var client = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
 
             if (client == null)
                 throw new PersonDoesntExistException("Указанного клиента не сущетсвует");
 
-            return _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
+            return client;
         }
 
-        public List<Client_db> GetClients(ClientFilter filter)
+        public List<ClientDb> GetClients(ClientFilter filter)
         {
 
             var clients = _dbContext.Clients.AsQueryable();
@@ -54,7 +54,7 @@ namespace Services
             return paginatedClients;
         }
 
-        public void AddClient(Client_db client)
+        public void AddClient(ClientDb client)
         {
             if (_dbContext.Clients.Contains(client))
                 throw new PersonAlreadyExistException("Данный клиент уже существует");
@@ -68,13 +68,13 @@ namespace Services
             if (client.NumberOfPassport == null)
                 throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            var newAccount = new Account_db
+            var newAccount = new AccountDb
             {
                 AccountId = Guid.NewGuid(),
                 Clientid = client.ClientId
             };
 
-            var currency = new Currency_db()
+            var currency = new CurrencyDb()
             {
                 Name = "RUB",
                 CurrencyId = Guid.NewGuid(),
@@ -87,45 +87,7 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public void AddClient(List<Client_db> clients)
-        {
-            foreach (var client in clients)
-            {
-                if (_dbContext.Clients.Contains(client))
-                    throw new PersonAlreadyExistException("Данный клиент уже существует");
-
-                if (((DateTime.Now - client.DateOfBirth).Days / 365) < 18)
-                    throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
-
-                if (string.IsNullOrEmpty(client.SeriesOfPassport))
-                    throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
-
-                if (client.NumberOfPassport == null)
-                    throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
-
-                
-                var newAccount = new Account_db()
-                {
-                    AccountId = Guid.NewGuid(),
-                    Clientid = client.ClientId
-                };
-
-
-                var currency = new Currency_db()
-                {
-                    Name = "RUB",
-                    CurrencyId = Guid.NewGuid(),
-                    AccountId = newAccount.AccountId
-                };
-                
-                _dbContext.Currency.Add(currency);
-                _dbContext.Accounts.Add(newAccount);
-                _dbContext.Clients.Add(client);
-            }
-            _dbContext.SaveChanges();
-        }
-
-        public void UpdateClient(Client_db client)
+        public void UpdateClient(ClientDb client)
         {
             var priorClient = _dbContext.Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
 
@@ -156,7 +118,7 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public Account_db GetAccount(Guid accountId)
+        public AccountDb GetAccount(Guid accountId)
         {
             var account = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
 
@@ -165,7 +127,7 @@ namespace Services
 
             return _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
         }
-        public void AddAccount(Account_db account)
+        public void AddAccount(AccountDb account)
         {
             if (account.Clientid == null)
                 throw new AccountDoesntExistException("Данный аккаунт не привязан ни к одному клиенту");
@@ -182,7 +144,7 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public void UpdateAccount(Account_db account)
+        public void UpdateAccount(AccountDb account)
         {
             var priorAccount = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == account.AccountId);
             var accountOwner = _dbContext.Clients.FirstOrDefault(c => c.ClientId == priorAccount.Clientid);
@@ -190,7 +152,7 @@ namespace Services
             if (!accountOwner.Accounts.Select(x => x.Clientid).Contains(priorAccount.Clientid))
                 throw new PersonAlreadyExistException("Данного аккаунта не существует");
 
-            priorAccount.Currency = account.Currency;
+            priorAccount.Currencys = account.Currencys;
             priorAccount.Amount = account.Amount;
 
             _dbContext.SaveChanges();

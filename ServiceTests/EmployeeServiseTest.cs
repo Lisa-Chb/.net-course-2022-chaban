@@ -17,7 +17,7 @@ namespace ServiceTests
             Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeListGenerator();
             List<Employee> employees = generatorEmployee.Generate(10);
 
-            var employee = new Employee_db
+            var employee = new EmployeeDb
             {
                 FirstName = "Дмитрий",
                 LastName = "Кузнецов",
@@ -50,7 +50,7 @@ namespace ServiceTests
             var service = new EmployeeService();
 
             var employeeId = Guid.NewGuid();
-            var employee = new Employee_db
+            var employee = new EmployeeDb
             {
                 FirstName = "Пауо",
                 LastName = "Коэльо",
@@ -87,7 +87,7 @@ namespace ServiceTests
             var service = new EmployeeService();
 
             var employeeId = Guid.NewGuid();
-            var employee = new Employee_db
+            var employee = new EmployeeDb
             {
                 FirstName = "Эдуард",
                 LastName = "Гаврилов",
@@ -102,7 +102,7 @@ namespace ServiceTests
                 Contract = "Принят на работу"
             };
 
-            var updateEmployee = new Employee_db
+            var updateEmployee = new EmployeeDb
             {
                 FirstName = "Говард",
                 LastName = "Лавкрафт",
@@ -130,12 +130,12 @@ namespace ServiceTests
             Assert.Equal(updateEmployee, updatedEmpl);
         }
 
-        private List<Employee_db> EmployeeMapping(List<Employee> employees)
+        private List<EmployeeDb> EmployeeMapping(List<Employee> employees)
         {
-            var employee_DbList = new List<Employee_db>();
+            var employee_DbList = new List<EmployeeDb>();
             foreach (var employee in employees)
             {
-                employee_DbList.Add(new Employee_db
+                employee_DbList.Add(new EmployeeDb
                 {
                     FirstName = employee.FirstName,
                     LastName = employee.LastName,

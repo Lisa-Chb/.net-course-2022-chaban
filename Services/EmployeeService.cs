@@ -16,7 +16,7 @@ namespace Services
             _dbContext = new ApplicationContext();
         }
 
-        public Employee_db GetEmployee(Guid employeeId)
+        public EmployeeDb GetEmployee(Guid employeeId)
         {
             var employee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
 
@@ -25,7 +25,7 @@ namespace Services
 
             return employee;
         }
-        public void AddNewEmployee(Employee_db employee)
+        public void AddNewEmployee(EmployeeDb employee)
         {
             if (_dbContext.Employees.Contains(employee))
                 throw new PersonAlreadyExistException("Данный работник уже существует");
@@ -46,7 +46,7 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public void AddNewEmployee(List<Employee_db> employees)
+        public void AddNewEmployee(List<EmployeeDb> employees)
         {
             foreach (var employee in employees)
             {
@@ -83,7 +83,7 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public void UpdateEmployee(Employee_db employee)
+        public void UpdateEmployee(EmployeeDb employee)
         {
             var priorEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employee.EmployeeId);
 
@@ -105,7 +105,7 @@ namespace Services
         }
 
 
-        public List<Employee_db> GetEmployees(EmployeeFilter filter)
+        public List<EmployeeDb> GetEmployees(EmployeeFilter filter)
         {
             var employees = _dbContext.Employees.AsQueryable();
 

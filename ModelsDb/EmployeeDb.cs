@@ -5,8 +5,13 @@ using System.Numerics;
 namespace ModelsDb
 {
     [Table(name: "employee")]
-    public class Employee_db 
+    public class EmployeeDb 
     {
+        [Key]
+        [Column(name: "employee_Id")]
+        public Guid EmployeeId { get; set; }
+
+
         [Column(name: "first_name")]
         public string FirstName { get; set; }
 
@@ -33,10 +38,7 @@ namespace ModelsDb
 
         [Column(name: "bonus_discount")]
         public int BonusDiscount { get; set; }
-
-        [Key]
-        [Column(name: "employee_Id")]
-        public Guid EmployeeId { get; set; }
+  
 
         [Column(name: "contract")]
         public string Contract { get; set; }
@@ -52,10 +54,10 @@ namespace ModelsDb
             if (obj == null)
                 return false;
 
-            if (!(obj is Employee_db))
+            if (!(obj is EmployeeDb))
                 return false;
 
-            var employee = (Employee_db)obj;
+            var employee = (EmployeeDb)obj;
             return employee.FirstName == FirstName &&
                 employee.LastName == LastName &&
                 employee.DateOfBirth == DateOfBirth &&

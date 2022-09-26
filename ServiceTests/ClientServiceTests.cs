@@ -1,12 +1,10 @@
 ﻿
 using Bogus;
-using Microsoft.VisualBasic;
 using Models;
 using ModelsDb;
 using Services;
 using Services.Exceptions;
 using Services.Filtres;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace ServiceTests
@@ -20,9 +18,9 @@ namespace ServiceTests
             //Arrange
             TestDataGenerator testDataGenerator = new TestDataGenerator();
             Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
-            List<Client> clients = generatorClient.Generate(10);
+            List<Client> clients = generatorClient.Generate(5);
 
-            var client = new Client_db
+            var client = new ClientDb
             {
                 FirstName = "Александр",
                 LastName = "Александров",
@@ -38,7 +36,10 @@ namespace ServiceTests
             var service = new ClientService();
 
             //Act
-            service.AddClient(ClientMapping(clients));
+            foreach (var c in clients)
+            {
+                service.AddClient(ClientMapping(c));
+            }
             service.AddClient(client);
             var getClient = service.GetClient(client.ClientId);
 
@@ -58,13 +59,12 @@ namespace ServiceTests
 
             var filter = new ClientFilter
             {
-               FirstName = "Tom",
+                FirstName = "Tom",
                 PageSize = 1,
                 //BonusDiscount = 1,
             };
 
-            var listTom = new List<Client_db> {
-              new Client_db
+            var clientTom = new ClientDb()
             {
                 FirstName = "Tom",
                 LastName = "Holland",
@@ -74,25 +74,15 @@ namespace ServiceTests
                 ClientId = Guid.NewGuid(),
                 BonusDiscount = 0,
                 DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime(),
-            },
-             new Client_db
-            {
-                FirstName = "Tom",
-                LastName = "Hemsword",
-                Phone = "77768654",
-                NumberOfPassport = 6854,
-                SeriesOfPassport = "657778",
-                ClientId = Guid.NewGuid(),
-                BonusDiscount = 5,
-                DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime(),
-             }
             };
 
-
             //Act
-            service.AddClient(ClientMapping(clients));
-            service.AddClient(listTom);
-           // var clientsOrderBy = service.GetClients(filter);
+            foreach (var c in clients)
+            {
+                service.AddClient(ClientMapping(c));
+            }
+            service.AddClient(clientTom);
+            // var clientsOrderBy = service.GetClients(filter);
 
             //Assert
             Assert.True(service.GetClients(filter).Count == 1);
@@ -108,7 +98,7 @@ namespace ServiceTests
 
             var clientId = Guid.NewGuid();
 
-            var client = new Client_db
+            var client = new ClientDb
             {
                 FirstName = "Пауо",
                 LastName = "Коэльо",
@@ -143,7 +133,7 @@ namespace ServiceTests
             var service = new ClientService();
 
             var clientId = Guid.NewGuid();
-            var client = new Client_db
+            var client = new ClientDb
             {
                 FirstName = "Пауо",
                 LastName = "Коэльо",
@@ -156,7 +146,7 @@ namespace ServiceTests
                 Accounts = null,
             };
 
-            var updateClient = new Client_db
+            var updateClient = new ClientDb
             {
                 FirstName = "Говард",
                 LastName = "Лавкрафт",
@@ -189,10 +179,9 @@ namespace ServiceTests
         {
             //Arrange
             var accountId = Guid.NewGuid();
-            var currencyId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
 
-            var client = new Client_db
+            var client = new ClientDb
             {
                 FirstName = "Павел",
                 LastName = "Коэльо",
@@ -205,20 +194,23 @@ namespace ServiceTests
                 Accounts = null,
             };
 
-            var currency = new Currency_db
+            var currencys = new List<CurrencyDb>
             {
-                CurrencyId = currencyId,
+                new CurrencyDb
+                {
+                CurrencyId = Guid.NewGuid(),
                 AccountId = accountId,
                 Name = "USD",
                 Code = 4567
+                }
             };
 
-            var account = new Account_db
+            var account = new AccountDb
             {
                 AccountId = accountId,
                 Clientid = clientId,
                 Amount = 23546364,
-                Currency = currency
+                Currencys = null
             };
 
             var service = new ClientService();
@@ -242,7 +234,7 @@ namespace ServiceTests
             var accountId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
 
-            var client = new Client_db
+            var client = new ClientDb
             {
                 FirstName = "Павел",
                 LastName = "Коэльо",
@@ -255,28 +247,31 @@ namespace ServiceTests
                 Accounts = null,
             };
 
-            var currency = new Currency_db
+            var currency = new List<CurrencyDb>
             {
+                new CurrencyDb
+                {
                 CurrencyId = Guid.NewGuid(),
                 AccountId = accountId,
                 Name = "USD",
                 Code = 4567
+                }
             };
 
-            var account = new Account_db
+            var account = new AccountDb
             {
                 AccountId = accountId,
                 Clientid = clientId,
                 Amount = 23546364,
-                Currency = currency
+                Currencys = null
             };
 
-            var updateAccount = new Account_db
+            var updateAccount = new AccountDb
             {
                 AccountId = accountId,
                 Clientid = clientId,
                 Amount = 1000,
-                Currency = currency
+                Currencys = null
             };
 
             //Act
@@ -303,7 +298,7 @@ namespace ServiceTests
             var accountId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
 
-            var client = new Client_db
+            var client = new ClientDb
             {
                 FirstName = "Иван",
                 LastName = "Иванов",
@@ -317,7 +312,7 @@ namespace ServiceTests
             };
 
 
-            var currency = new Currency_db
+            var currency = new CurrencyDb
             {
                 CurrencyId = Guid.NewGuid(),
                 AccountId = accountId,
@@ -325,12 +320,12 @@ namespace ServiceTests
                 Code = 4567
             };
 
-            var account = new Account_db
+            var account = new AccountDb
             {
                 AccountId = accountId,
                 Clientid = clientId,
                 Amount = 23546364,
-                Currency = currency
+                Currencys = null
             };
 
             //Act
@@ -347,24 +342,19 @@ namespace ServiceTests
                 service.GetAccount(accountId);
             });
         }
-        private List<Client_db> ClientMapping(List<Client> clients)
+        private ClientDb ClientMapping(Client client)
         {
-            var client_DbList = new List<Client_db>();
-            foreach (var client in clients)
+            return new ClientDb()
             {
-                client_DbList.Add(new Client_db
-                {
-                    FirstName = client.FirstName,
-                    LastName = client.LastName,
-                    NumberOfPassport = client.NumberOfPassport,
-                    SeriesOfPassport = client.SeriesOfPassport,
-                    Phone = client.Phone,
-                    DateOfBirth = client.DateOfBirth,
-                    BonusDiscount = client.BonusDiscount,
-                    ClientId = client.ClientId,
-                });
-            }
-            return client_DbList;
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                NumberOfPassport = client.NumberOfPassport,
+                SeriesOfPassport = client.SeriesOfPassport,
+                Phone = client.Phone,
+                DateOfBirth = client.DateOfBirth,
+                BonusDiscount = client.BonusDiscount,
+                ClientId = client.ClientId,
+            };
         }
     }
 }

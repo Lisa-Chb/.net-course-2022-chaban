@@ -6,10 +6,10 @@ namespace ModelsDb.Data
 {
     public class ApplicationContext : DbContext
     {
-        public DbSet<Client_db> Clients { get; set; }
-        public DbSet<Employee_db> Employees { get; set; }
-        public DbSet<Account_db> Accounts { get; set; }
-        public DbSet<Currency_db> Currency { get; set; }
+        public DbSet<ClientDb> Clients { get; set; }
+        public DbSet<EmployeeDb> Employees { get; set; }
+        public DbSet<AccountDb> Accounts { get; set; }
+        public DbSet<CurrencyDb> Currency { get; set; }
         public ApplicationContext()
         {
             Database.EnsureCreated();
@@ -18,14 +18,6 @@ namespace ModelsDb.Data
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Superliza228");
             optionsBuilder.LogTo(s => Debug.WriteLine(s));
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Account_db>()
-                .HasOne(b => b.Currency)
-                .WithOne(i => i.Account)
-                .HasForeignKey<Currency_db>(b => b.AccountId);
         }
     }
 }
