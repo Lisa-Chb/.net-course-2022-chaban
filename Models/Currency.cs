@@ -3,10 +3,8 @@ namespace Models
 {
     public class Currency
     {
-        public Guid CurrencyId { get; set; }
-        public Guid AccountId { get; set; }
-        public Account Account { get; set; }
-        public string Name { get; set; }
-        public int Code { get; set; }
+        public int CurrencyCode { get; set; }    
+        public List<Account> Account { get; set; }
+        public string Name { get; set; }      
     }
 }

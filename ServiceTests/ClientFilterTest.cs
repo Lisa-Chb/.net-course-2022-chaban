@@ -1,14 +1,11 @@
-﻿
-using Models;
-using ModelsDb;
+﻿using Models;
 using Services;
 using Services.Filtres;
 using Xunit;
 
 namespace ServiceTests
 {
-
-    public class ClientStorageTest
+    public class ClientFilterTest
     {
         [Fact]
 
@@ -25,7 +22,7 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientJohn));
+            testClientService.AddClient(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.ClientId = Guid.NewGuid();
@@ -35,7 +32,7 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientJohnToo));
+            testClientService.AddClient(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.ClientId = Guid.NewGuid();
@@ -45,7 +42,7 @@ namespace ServiceTests
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 2367;
             clientEmily.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientEmily));
+            testClientService.AddClient(clientEmily);
 
             var filter = new ClientFilter();
             filter.FirstName = "John";
@@ -55,7 +52,7 @@ namespace ServiceTests
             var clients = testClientService.GetClients(filter);
 
             //Assert
-            Assert.DoesNotContain(ClientMapping(clientEmily), clients);
+            Assert.DoesNotContain(clientEmily, clients);
         }
 
 
@@ -74,7 +71,7 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientJohn));
+            testClientService.AddClient(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.ClientId = Guid.NewGuid();
@@ -84,7 +81,7 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(1999, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientJohnToo));
+            testClientService.AddClient(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.ClientId = Guid.NewGuid();
@@ -94,7 +91,7 @@ namespace ServiceTests
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 6865;
             clientEmily.DateOfBirth = new DateTime(1998, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientEmily));
+            testClientService.AddClient(clientEmily);
 
             var filter = new ClientFilter();
             filter.NumberOfPassport = 2367;
@@ -104,7 +101,7 @@ namespace ServiceTests
             var clients = testClientService.GetClients(filter);
 
             //Assert
-            Assert.DoesNotContain(ClientMapping(clientEmily), clients);
+            Assert.DoesNotContain(clientEmily, clients);
         }
 
         [Fact]
@@ -122,7 +119,7 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientJohn));
+            testClientService.AddClient(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.ClientId = Guid.NewGuid();
@@ -132,7 +129,7 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(1978, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientJohnToo));
+            testClientService.AddClient(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.ClientId = Guid.NewGuid();
@@ -142,7 +139,7 @@ namespace ServiceTests
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 2367;
             clientEmily.DateOfBirth = new DateTime(1954, 5, 6).ToUniversalTime();
-            testClientService.AddClient(ClientMapping(clientEmily));
+            testClientService.AddClient(clientEmily);
 
             var filter = new ClientFilter();
             filter.MinDateTime = new DateTime(1950, 1, 1).ToUniversalTime();
@@ -153,7 +150,7 @@ namespace ServiceTests
             var clients = testClientService.GetClients(filter);
 
             //Assert
-            Assert.DoesNotContain(ClientMapping(clientJohn), clients);
+            Assert.DoesNotContain(clientJohn, clients);
         }
         /*
                 [Fact]
@@ -300,24 +297,7 @@ namespace ServiceTests
                     Assert.Equal(expectedAge, 45);
 
                 }
-        */
-
-        private ClientDb ClientMapping(Client client)
-        {
-            var client_Db = new ClientDb
-            {
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                NumberOfPassport = client.NumberOfPassport,
-                SeriesOfPassport = client.SeriesOfPassport,
-                Phone = client.Phone,
-                DateOfBirth = client.DateOfBirth,
-                BonusDiscount = client.BonusDiscount,
-                ClientId = client.ClientId,
-            };
-
-            return client_Db;
-        }
+        */      
     }
 }
     

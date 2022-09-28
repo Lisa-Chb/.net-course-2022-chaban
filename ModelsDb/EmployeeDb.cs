@@ -48,34 +48,5 @@ namespace ModelsDb
 
         [Column(name: "position")]
         public string Position { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-                return false;
-
-            if (!(obj is EmployeeDb))
-                return false;
-
-            var employee = (EmployeeDb)obj;
-            return employee.FirstName == FirstName &&
-                employee.LastName == LastName &&
-                employee.DateOfBirth == DateOfBirth &&
-                employee.Phone == Phone &&
-                employee.SeriesOfPassport == SeriesOfPassport &&
-                employee.NumberOfPassport == NumberOfPassport &&
-                employee.EmployeeId == EmployeeId &&
-                employee.BonusDiscount == BonusDiscount &&
-                employee.Position == Position &&
-                employee.Contract == Contract &&
-                employee.Salary == Salary;
-        }
-
-        public override int GetHashCode()
-        {
-            var hashCode1 = HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, Position, Contract, NumberOfPassport);
-            var hashCode2 = HashCode.Combine(EmployeeId, BonusDiscount, Salary);
-            return hashCode1 + hashCode2;
-        }
     }
 }

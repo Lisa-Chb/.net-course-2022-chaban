@@ -13,17 +13,20 @@ namespace ModelsDb
         [Column(name: "account_id")]
         public Guid AccountId { get; set; }
 
-
+  
         [Column(name: "client_id")]
         public Guid Clientid { get; set; }
-
 
         [Column(name: "client")]
         public ClientDb Client { get; set; }
 
 
+        [ForeignKey("currencies")]
+        [Column(name: "currency_code")]
+        public int CurrencyCode { get; set; }
+
         [Column(name: "currency")]
-        public List<CurrencyDb> Currencys { get; set; }
+        public CurrencyDb Currency { get; set; }
 
 
         [Column(name: "amount")]

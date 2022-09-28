@@ -1,5 +1,4 @@
-﻿using Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
@@ -43,32 +42,6 @@ namespace ModelsDb
 
         [Column(name: "accounts")]
         public List<AccountDb> Accounts { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-                return false;
-
-            if (!(obj is ClientDb))
-                return false;
-
-            var client = (ClientDb)obj;
-            return client.FirstName == FirstName &&
-                client.LastName == LastName &&
-                client.DateOfBirth == DateOfBirth &&
-                client.Phone == Phone &&
-                client.SeriesOfPassport == SeriesOfPassport &&
-                client.NumberOfPassport == NumberOfPassport &&
-                client.BonusDiscount == BonusDiscount &&
-                client.ClientId == ClientId &&
-                client.Accounts == Accounts;
-        }
-        public override int GetHashCode()
-        {
-            var hashCode =  HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport, Accounts, ClientId);
-            return hashCode + BonusDiscount;
-        }
     }
-
 }
     

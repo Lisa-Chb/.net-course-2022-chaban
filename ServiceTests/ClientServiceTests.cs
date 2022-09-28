@@ -1,7 +1,5 @@
-﻿
-using Bogus;
+﻿using Bogus;
 using Models;
-using ModelsDb;
 using Services;
 using Services.Exceptions;
 using Services.Filtres;
@@ -12,15 +10,16 @@ namespace ServiceTests
     public class ClientServiceTests
     {
         [Fact]
-
         public void AddGetClientTest()
         {
             //Arrange
+            var service = new ClientService();
+
             TestDataGenerator testDataGenerator = new TestDataGenerator();
             Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
             List<Client> clients = generatorClient.Generate(5);
 
-            var client = new ClientDb
+            var client = new Client
             {
                 FirstName = "Александр",
                 LastName = "Александров",
@@ -29,18 +28,16 @@ namespace ServiceTests
                 Phone = "77956734",
                 DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime(),
                 BonusDiscount = 5,
-                ClientId = Guid.NewGuid(),
-                Accounts = null,
+                ClientId = Guid.NewGuid()
             };
-
-            var service = new ClientService();
 
             //Act
             foreach (var c in clients)
             {
-                service.AddClient(ClientMapping(c));
+                service.AddClient(c);
             }
             service.AddClient(client);
+
             var getClient = service.GetClient(client.ClientId);
 
             //Assert
@@ -48,23 +45,16 @@ namespace ServiceTests
         }
 
         [Fact]
-
         public void GetClientsTest()
         {
             //Arrange
+            var service = new ClientService();
+
             TestDataGenerator testDataGenerator = new TestDataGenerator();
             Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
             List<Client> clients = generatorClient.Generate(5);
-            var service = new ClientService();
 
-            var filter = new ClientFilter
-            {
-                FirstName = "Tom",
-                PageSize = 1,
-                //BonusDiscount = 1,
-            };
-
-            var clientTom = new ClientDb()
+            var clientTom = new Client()
             {
                 FirstName = "Tom",
                 LastName = "Holland",
@@ -73,16 +63,21 @@ namespace ServiceTests
                 SeriesOfPassport = "657755",
                 ClientId = Guid.NewGuid(),
                 BonusDiscount = 0,
-                DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime(),
+                DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime()
+            };
+
+            var filter = new ClientFilter
+            {
+                FirstName = "Tom",
+                PageSize = 1
             };
 
             //Act
             foreach (var c in clients)
             {
-                service.AddClient(ClientMapping(c));
+                service.AddClient(c);
             }
             service.AddClient(clientTom);
-            // var clientsOrderBy = service.GetClients(filter);
 
             //Assert
             Assert.True(service.GetClients(filter).Count == 1);
@@ -90,15 +85,13 @@ namespace ServiceTests
         }
 
         [Fact]
-
         public void DeleteClientTest()
         {
             //Arrange
             var service = new ClientService();
 
             var clientId = Guid.NewGuid();
-
-            var client = new ClientDb
+            var client = new Client
             {
                 FirstName = "Пауо",
                 LastName = "Коэльо",
@@ -107,15 +100,16 @@ namespace ServiceTests
                 Phone = "77956730",
                 DateOfBirth = new DateTime(1996, 8, 12).ToUniversalTime(),
                 BonusDiscount = 5,
-                ClientId = clientId,
-                Accounts = null,
+                ClientId = clientId
             };
 
             //Act
             service.AddClient(client);
 
             var getClient = service.GetClient(clientId);
+
             Assert.Equal(getClient, client);
+
             service.DeleteClient(clientId);
 
             //Assert
@@ -126,14 +120,13 @@ namespace ServiceTests
         }
 
         [Fact]
-
         public void UpdateClientTest()
         {
             //Arrange
             var service = new ClientService();
 
             var clientId = Guid.NewGuid();
-            var client = new ClientDb
+            var client = new Client
             {
                 FirstName = "Пауо",
                 LastName = "Коэльо",
@@ -142,46 +135,45 @@ namespace ServiceTests
                 Phone = "77956730",
                 DateOfBirth = new DateTime(1996, 8, 12).ToUniversalTime(),
                 BonusDiscount = 5,
-                ClientId = clientId,
-                Accounts = null,
+                ClientId = clientId
             };
 
-            var updateClient = new ClientDb
+            var updateClient = new Client
             {
                 FirstName = "Говард",
                 LastName = "Лавкрафт",
                 NumberOfPassport = 7777,
                 SeriesOfPassport = "666666",
-                Phone = "77777777",
+                Phone = "77956730",
                 DateOfBirth = new DateTime(1996, 8, 12).ToUniversalTime(),
                 BonusDiscount = 10,
-                ClientId = clientId,
-                Accounts = null,
+                ClientId = clientId
             };
 
             //Act
             service.AddClient(client);
             var getClient = service.GetClient(clientId);
-            Assert.Equal(client, getClient);
 
             service.UpdateClient(updateClient);
-
             var updatedCl = service.GetClient(clientId);
 
+            Assert.Equal(client, getClient);
+
             //Assert
-            Assert.Equal(updateClient, updatedCl);
+            Assert.Equal(updateClient.FirstName, updatedCl.FirstName);
         }
 
 
         [Fact]
-
         public void AddGetAccountTest()
         {
             //Arrange
+            var service = new ClientService();
+
             var accountId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
 
-            var client = new ClientDb
+            var client = new Client
             {
                 FirstName = "Павел",
                 LastName = "Коэльо",
@@ -190,51 +182,37 @@ namespace ServiceTests
                 Phone = "77956730",
                 DateOfBirth = new DateTime(1990, 8, 12).ToUniversalTime(),
                 BonusDiscount = 5,
-                ClientId = clientId,
-                Accounts = null,
+                ClientId = clientId
             };
 
-            var currencys = new List<CurrencyDb>
-            {
-                new CurrencyDb
-                {
-                CurrencyId = Guid.NewGuid(),
-                AccountId = accountId,
-                Name = "USD",
-                Code = 4567
-                }
-            };
-
-            var account = new AccountDb
+            var account = new Account
             {
                 AccountId = accountId,
                 Clientid = clientId,
-                Amount = 23546364,
-                Currencys = null
+                CurrencyCode = 840,
+                Amount = 23546364
             };
-
-            var service = new ClientService();
 
             //Act
             service.AddClient(client);
             service.AddAccount(account);
+
             var getAccount = service.GetAccount(accountId);
 
             //Assert
-            Assert.Equal(account, getAccount);
+            Assert.Equal(account.Amount, getAccount.Amount);
         }
 
         [Fact]
         public void UpdateAccountTest()
         {
             //Arrange
-
             var service = new ClientService();
 
             var accountId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
 
-            var client = new ClientDb
+            var client = new Client
             {
                 FirstName = "Павел",
                 LastName = "Коэльо",
@@ -243,43 +221,32 @@ namespace ServiceTests
                 Phone = "77956730",
                 DateOfBirth = new DateTime(1990, 8, 12).ToUniversalTime(),
                 BonusDiscount = 5,
-                ClientId = clientId,
-                Accounts = null,
+                ClientId = clientId
             };
 
-            var currency = new List<CurrencyDb>
-            {
-                new CurrencyDb
-                {
-                CurrencyId = Guid.NewGuid(),
-                AccountId = accountId,
-                Name = "USD",
-                Code = 4567
-                }
-            };
-
-            var account = new AccountDb
+            var account = new Account
             {
                 AccountId = accountId,
                 Clientid = clientId,
-                Amount = 23546364,
-                Currencys = null
+                CurrencyCode = 840,
+                Amount = 23546364
             };
 
-            var updateAccount = new AccountDb
+            var updateAccount = new Account
             {
                 AccountId = accountId,
                 Clientid = clientId,
-                Amount = 1000,
-                Currencys = null
+                CurrencyCode = 840,
+                Amount = 10000000
             };
 
             //Act
             service.AddClient(client);
             service.AddAccount(account);
+
             var getAccount = service.GetAccount(accountId);
 
-            Assert.Equal(account, getAccount);
+            Assert.Equal(account.Amount, getAccount.Amount);
 
             service.UpdateAccount(updateAccount);
             var updatedAcc = service.GetAccount(accountId);
@@ -289,7 +256,6 @@ namespace ServiceTests
         }
 
         [Fact]
-
         public void DeleteAccountTest()
         {
             //Arrange
@@ -298,7 +264,7 @@ namespace ServiceTests
             var accountId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
 
-            var client = new ClientDb
+            var client = new Client
             {
                 FirstName = "Иван",
                 LastName = "Иванов",
@@ -307,25 +273,15 @@ namespace ServiceTests
                 Phone = "77956730",
                 DateOfBirth = new DateTime(1990, 8, 12).ToUniversalTime(),
                 BonusDiscount = 5,
-                ClientId = clientId,
-                Accounts = null,
+                ClientId = clientId
             };
 
-
-            var currency = new CurrencyDb
-            {
-                CurrencyId = Guid.NewGuid(),
-                AccountId = accountId,
-                Name = "RUB",
-                Code = 4567
-            };
-
-            var account = new AccountDb
+            var account = new Account
             {
                 AccountId = accountId,
                 Clientid = clientId,
-                Amount = 23546364,
-                Currencys = null
+                CurrencyCode = 840,
+                Amount = 23546364
             };
 
             //Act
@@ -333,7 +289,8 @@ namespace ServiceTests
             service.AddAccount(account);
 
             var getAccount = service.GetAccount(accountId);
-            Assert.Equal(account, getAccount);
+
+            Assert.Equal(account.Amount, getAccount.Amount);
             service.DeleteAccount(accountId);
 
             //Assert
@@ -341,20 +298,6 @@ namespace ServiceTests
             {
                 service.GetAccount(accountId);
             });
-        }
-        private ClientDb ClientMapping(Client client)
-        {
-            return new ClientDb()
-            {
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                NumberOfPassport = client.NumberOfPassport,
-                SeriesOfPassport = client.SeriesOfPassport,
-                Phone = client.Phone,
-                DateOfBirth = client.DateOfBirth,
-                BonusDiscount = client.BonusDiscount,
-                ClientId = client.ClientId,
-            };
         }
     }
 }

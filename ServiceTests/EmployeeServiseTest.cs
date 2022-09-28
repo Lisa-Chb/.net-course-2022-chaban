@@ -127,7 +127,7 @@ namespace ServiceTests
             var updatedEmpl = service.GetEmployee(employeeId);
 
             //Assert
-            Assert.Equal(updateEmployee, updatedEmpl);
+            Assert.Equal(updateEmployee.FirstName, updatedEmpl.FirstName);
         }
 
         private List<EmployeeDb> EmployeeMapping(List<Employee> employees)

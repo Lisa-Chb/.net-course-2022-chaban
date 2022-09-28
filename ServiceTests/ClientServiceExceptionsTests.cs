@@ -14,7 +14,7 @@ namespace ServiceTests
         public void ClientAgeValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutAge= new ClientDb();
+            var clientWithoutAge= new Client();
             clientWithoutAge.DateOfBirth = new DateTime(year: 2007, 5, 6);
             clientWithoutAge.SeriesOfPassport = "I-ПР";
             clientWithoutAge.NumberOfPassport = 356223435;
@@ -29,7 +29,7 @@ namespace ServiceTests
         public void ClientSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutSeriesOfPassort = new ClientDb();
+            var clientWithoutSeriesOfPassort = new Client();
             clientWithoutSeriesOfPassort.NumberOfPassport = 356223435;
             clientWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
 
@@ -43,7 +43,7 @@ namespace ServiceTests
         public void ClientNumberOfPassportValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutNumberOfPassort = new ClientDb();
+            var clientWithoutNumberOfPassort = new Client();
             clientWithoutNumberOfPassort.DateOfBirth = new DateTime(year:1998, 5, 5);
             clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
             
@@ -58,7 +58,7 @@ namespace ServiceTests
         {
             //Arrange
             var testClientService = new ClientService();
-            var dictionaryClient = new ClientDb();
+            var dictionaryClient = new Client();
             dictionaryClient.FirstName = "John";
             dictionaryClient.LastName = "Johanson";
             dictionaryClient.Phone = "66748563";
@@ -67,7 +67,7 @@ namespace ServiceTests
             dictionaryClient.NumberOfPassport = 356223435;
             dictionaryClient.ClientId = Guid.NewGuid();
 
-            var client = new ClientDb();
+            var client = new Client();
             dictionaryClient.FirstName = "John";
             dictionaryClient.LastName = "Johanson";
             dictionaryClient.Phone = "66748563";
