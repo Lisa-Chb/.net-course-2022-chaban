@@ -17,8 +17,9 @@ namespace ServiceTests
             Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeListGenerator();
             List<Employee> employees = generatorEmployee.Generate(10);
 
-            var employee = new EmployeeDb
+            var employee = new Employee
             {
+                EmployeeId = Guid.NewGuid(),
                 FirstName = "Дмитрий",
                 LastName = "Кузнецов",
                 NumberOfPassport = 25422,
@@ -34,7 +35,11 @@ namespace ServiceTests
             var service = new EmployeeService();
 
             //Act
-            service.AddNewEmployee(EmployeeMapping(employees));
+            foreach (var e in employees)
+            {
+                service.AddNewEmployee(e);
+            }          
+         
             service.AddNewEmployee(employee);
             var getEmployee = service.GetEmployee(employee.EmployeeId);
 
@@ -43,14 +48,13 @@ namespace ServiceTests
         }
 
         [Fact]
-
         public void DeleteEmployeeTest()
         {
             //Arrange
             var service = new EmployeeService();
 
             var employeeId = Guid.NewGuid();
-            var employee = new EmployeeDb
+            var employee = new Employee
             {
                 FirstName = "Пауо",
                 LastName = "Коэльо",
@@ -80,14 +84,13 @@ namespace ServiceTests
         }
 
         [Fact]
-
         public void UpdateEmployeeTest()
         {
             //Arrange
             var service = new EmployeeService();
 
             var employeeId = Guid.NewGuid();
-            var employee = new EmployeeDb
+            var employee = new Employee
             {
                 FirstName = "Эдуард",
                 LastName = "Гаврилов",
@@ -102,7 +105,7 @@ namespace ServiceTests
                 Contract = "Принят на работу"
             };
 
-            var updateEmployee = new EmployeeDb
+            var updateEmployee = new Employee
             {
                 FirstName = "Говард",
                 LastName = "Лавкрафт",
@@ -128,29 +131,6 @@ namespace ServiceTests
 
             //Assert
             Assert.Equal(updateEmployee.FirstName, updatedEmpl.FirstName);
-        }
-
-        private List<EmployeeDb> EmployeeMapping(List<Employee> employees)
-        {
-            var employee_DbList = new List<EmployeeDb>();
-            foreach (var employee in employees)
-            {
-                employee_DbList.Add(new EmployeeDb
-                {
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    NumberOfPassport = employee.NumberOfPassport,
-                    SeriesOfPassport = employee.SeriesOfPassport,
-                    Phone = employee.Phone,
-                    DateOfBirth = employee.DateOfBirth,
-                    BonusDiscount = employee.BonusDiscount,
-                    Salary = employee.Salary,
-                    Position = employee.Position,
-                    Contract = employee.Contract,
-                    EmployeeId = employee.EmployeeId
-                });
-            }
-            return employee_DbList;
         }
     }
 }

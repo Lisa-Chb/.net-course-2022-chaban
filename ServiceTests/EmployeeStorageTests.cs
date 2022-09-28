@@ -3,6 +3,7 @@ using Services.Filtres;
 using Services;
 using Xunit;
 using ModelsDb;
+using Models;
 
 namespace ServiceTests
 {
@@ -11,11 +12,10 @@ namespace ServiceTests
         [Fact]
         public void SelectEmployeeWithNameTest()
         {
-
             //Arrange
             var testEmployeeService = new EmployeeService();
 
-            var employeeJohn = new EmployeeDb();
+            var employeeJohn = new Employee();
             employeeJohn.EmployeeId = Guid.NewGuid();
             employeeJohn.FirstName = "John";
             employeeJohn.LastName = "Wick";
@@ -27,7 +27,7 @@ namespace ServiceTests
             employeeJohn.Contract = "Принят на работу";
             testEmployeeService.AddNewEmployee(employeeJohn);
 
-            var employeeTestName = new EmployeeDb();
+            var employeeTestName = new Employee();
             employeeTestName.EmployeeId = Guid.NewGuid();
             employeeTestName.FirstName = "TestName";
             employeeTestName.LastName = "Wick";
@@ -39,7 +39,7 @@ namespace ServiceTests
             employeeTestName.Contract = "Принят на работу";
             testEmployeeService.AddNewEmployee(employeeTestName);
 
-            var employeeEmily = new EmployeeDb();
+            var employeeEmily = new Employee();
             employeeEmily.EmployeeId = Guid.NewGuid();
             employeeEmily.FirstName = "Emily";
             employeeEmily.LastName = "Wick";
@@ -62,13 +62,12 @@ namespace ServiceTests
 
 
         [Fact]
-
         public void SelectEmployeeWithNumberOfPassportTest()
         {
             //Arrange
             var testEmployeeService = new EmployeeService();
 
-            var employeeJohn = new EmployeeDb();
+            var employeeJohn = new Employee();
             employeeJohn.EmployeeId = Guid.NewGuid();
             employeeJohn.FirstName = "John";
             employeeJohn.LastName = "Wick";
@@ -80,7 +79,7 @@ namespace ServiceTests
             employeeJohn.Contract = "Принят на работу";
             testEmployeeService.AddNewEmployee(employeeJohn);
 
-            var employeeJohnToo = new EmployeeDb();
+            var employeeJohnToo = new Employee();
             employeeJohnToo.EmployeeId = Guid.NewGuid();
             employeeJohnToo.FirstName = "John";
             employeeJohnToo.LastName = "Wick";
@@ -92,7 +91,7 @@ namespace ServiceTests
             employeeJohnToo.Contract = "Принят на работу";
             testEmployeeService.AddNewEmployee(employeeJohnToo);
 
-            var employeeEmily = new EmployeeDb();
+            var employeeEmily = new Employee();
             employeeEmily.EmployeeId = Guid.NewGuid();
             employeeEmily.FirstName = "Emily";
             employeeEmily.LastName = "Wick";
@@ -170,14 +169,13 @@ namespace ServiceTests
         */
 
         [Fact]
-
         public void SelectEmployeeWithPositionTest()
         {
 
             //Arrange
             var testEmployeeService = new EmployeeService();
 
-            var employeeJohn = new EmployeeDb();
+            var employeeJohn = new Employee();
             employeeJohn.EmployeeId = Guid.NewGuid();
             employeeJohn.FirstName = "John";
             employeeJohn.LastName = "Wick";
@@ -189,7 +187,7 @@ namespace ServiceTests
             employeeJohn.Contract = "Принят на работу";
             testEmployeeService.AddNewEmployee(employeeJohn);
 
-            var employeeJohnToo = new EmployeeDb();
+            var employeeJohnToo = new Employee();
             employeeJohnToo.EmployeeId = Guid.NewGuid();
             employeeJohnToo.FirstName = "John";
             employeeJohnToo.LastName = "Wick";
@@ -201,7 +199,7 @@ namespace ServiceTests
             employeeJohnToo.Contract = "Принят на работу";
             testEmployeeService.AddNewEmployee(employeeJohnToo);
 
-            var employeeEmily = new EmployeeDb();
+            var employeeEmily = new Employee();
             employeeEmily.EmployeeId = Guid.NewGuid();
             employeeEmily.FirstName = "Emily";
             employeeEmily.LastName = "Wick";
@@ -216,9 +214,6 @@ namespace ServiceTests
             var filter = new EmployeeFilter();
             filter.Position = "Тестовая должность";
             filter.PageSize = 10;
-
-            var expectedList = new List<EmployeeDb>();
-            expectedList.Add(employeeJohn);
 
             //Act Assert
             var expectedPosition = testEmployeeService.GetEmployees(filter).FirstOrDefault().Position;

@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Models;
 using ModelsDb;
 using ModelsDb.Data;
 using Services.Exceptions;
@@ -16,57 +17,36 @@ namespace Services
             _dbContext = new ApplicationContext();
         }
 
-        public EmployeeDb GetEmployee(Guid employeeId)
+        public Employee GetEmployee(Guid employeeId)
         {
             var employee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
 
             if (employee == null)
                 throw new PersonDoesntExistException("Указанного сотрудника не сущетсвует");
 
-            return employee;
-        }
-        public void AddNewEmployee(EmployeeDb employee)
+            return EmployeeMapping(employee);
+        }    
+
+        public void AddNewEmployee(Employee employee)
         {
-            if (_dbContext.Employees.Contains(employee))
+            var employeeDb = EmployeeMapping(employee);
+
+            if (_dbContext.Employees.Contains(employeeDb))
                 throw new PersonAlreadyExistException("Данный работник уже существует");
 
-            if ((DateTime.Now - employee.DateOfBirth).Days / 365 < 18)
+            if ((DateTime.Now - employeeDb.DateOfBirth).Days / 365 < 18)
                 throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
 
-            if (string.IsNullOrEmpty(employee.SeriesOfPassport))
+            if (string.IsNullOrEmpty(employeeDb.SeriesOfPassport))
                 throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
 
-            if (employee.NumberOfPassport == null)
+            if (employeeDb.NumberOfPassport == null)
                 throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            if (string.IsNullOrEmpty(employee.Position))
+            if (string.IsNullOrEmpty(employeeDb.Position))
                 throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
 
-            _dbContext.Add(employee);
-            _dbContext.SaveChanges();
-        }
-
-        public void AddNewEmployee(List<EmployeeDb> employees)
-        {
-            foreach (var employee in employees)
-            {
-                if (_dbContext.Employees.Contains(employee))
-                    throw new PersonAlreadyExistException("Данный работник уже существует");
-
-                if ((DateTime.Now - employee.DateOfBirth).Days / 365 < 18)
-                    throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
-
-                if (string.IsNullOrEmpty(employee.SeriesOfPassport))
-                    throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
-
-                if (employee.NumberOfPassport == null)
-                    throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
-
-                if (string.IsNullOrEmpty(employee.Position))
-                    throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
-
-                _dbContext.Add(employee);
-            }
+            _dbContext.Add(employeeDb);
 
             _dbContext.SaveChanges();
         }
@@ -83,7 +63,7 @@ namespace Services
             _dbContext.SaveChanges();
         }
 
-        public void UpdateEmployee(EmployeeDb employee)
+        public void UpdateEmployee(Employee employee)
         {
             var priorEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employee.EmployeeId);
 
@@ -105,31 +85,77 @@ namespace Services
         }
 
 
-        public List<EmployeeDb> GetEmployees(EmployeeFilter filter)
+        public List<Employee> GetEmployees(EmployeeFilter filter)
         {
-            var employees = _dbContext.Employees.AsQueryable();
+            var employeesDb = _dbContext.Employees.AsQueryable();
 
             if (filter.FirstName != null)
-                employees = employees.Where(s => s.FirstName == filter.FirstName);
+                employeesDb = employeesDb.Where(s => s.FirstName == filter.FirstName);
 
             if (filter.LastName != null)
-                employees = employees.Where(s => s.LastName == filter.LastName);
+                employeesDb = employeesDb.Where(s => s.LastName == filter.LastName);
 
             if (filter.NumberOfPassport != null)
-                employees = employees.Where(s => s.NumberOfPassport == filter.NumberOfPassport);
+                employeesDb = employeesDb.Where(s => s.NumberOfPassport == filter.NumberOfPassport);
 
             if (filter.MinDateTime != null)
-                employees = employees.Where(s => s.DateOfBirth >= filter.MinDateTime);
+                employeesDb = employeesDb.Where(s => s.DateOfBirth >= filter.MinDateTime);
 
             if (filter.MaxDateTime != null)
-                employees = employees.Where(s => s.DateOfBirth <= filter.MaxDateTime);
+                employeesDb = employeesDb.Where(s => s.DateOfBirth <= filter.MaxDateTime);
 
             if (filter.Position != null)
-                employees = employees.Where(x => x.Position == filter.Position);
+                employeesDb = employeesDb.Where(x => x.Position == filter.Position);
 
-            var paginatedEmployees = employees.Skip((filter.Page - 1)* filter.PageSize).Take(filter.PageSize).ToList();
+            var paginatedEmployees = employeesDb.Skip((filter.Page - 1)* filter.PageSize).Take(filter.PageSize).ToList();
 
-            return paginatedEmployees;
+            var employees = new List<Employee>();
+            foreach (var employee in paginatedEmployees)
+            {
+                employees.Add(EmployeeMapping(employee));
+            }
+
+            return employees;
+        }
+
+        private EmployeeDb EmployeeMapping(Employee employee)
+        {       
+               var employeeDb = new EmployeeDb
+                {
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    NumberOfPassport = employee.NumberOfPassport,
+                    SeriesOfPassport = employee.SeriesOfPassport,
+                    Phone = employee.Phone,
+                    DateOfBirth = employee.DateOfBirth,
+                    BonusDiscount = employee.BonusDiscount,
+                    Salary = employee.Salary,
+                    Position = employee.Position,
+                    Contract = employee.Contract,
+                    EmployeeId = employee.EmployeeId
+                };
+            
+            return employeeDb;
+        }
+
+        private Employee EmployeeMapping(EmployeeDb employeeDb)
+        {
+            var employee = new Employee
+            {
+                FirstName = employeeDb.FirstName,
+                LastName = employeeDb.LastName,
+                NumberOfPassport = employeeDb.NumberOfPassport,
+                SeriesOfPassport = employeeDb.SeriesOfPassport,
+                Phone = employeeDb.Phone,
+                DateOfBirth = employeeDb.DateOfBirth,
+                BonusDiscount = employeeDb.BonusDiscount,
+                Salary = employeeDb.Salary,
+                Position = employeeDb.Position,
+                Contract = employeeDb.Contract,
+                EmployeeId = employeeDb.EmployeeId
+            };
+
+            return employee;
         }
     }
 }
