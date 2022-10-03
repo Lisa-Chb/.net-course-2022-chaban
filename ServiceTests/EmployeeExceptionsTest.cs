@@ -7,13 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Services.Exceptions;
+using ModelsDb;
 
 namespace ServiceTests
 {
     public class EmployeeServiceTest
-    {
+    { 
         [Fact]
-
         public void EmployeeAgeValidationExceptionTest()
         {
             //Arrange
@@ -24,13 +24,11 @@ namespace ServiceTests
             employeeWithoutAge.Position = "Программист";
 
             //Act Assert
-            var employeeStorage = new EmployeeStorage();
-            EmployeeService testEmployeeService = new EmployeeService(employeeStorage);
-            Assert.Throws<PersonAgeValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutAge));
+            var testEmployeeService = new EmployeeService();
+            Assert.Throws<PersonAgeValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutAge));       
         }
 
         [Fact]
-
         public void EmployeeSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
@@ -40,13 +38,11 @@ namespace ServiceTests
             employeeWithoutSeriesOfPassort.Position = "Программист";
 
             //Act Assert
-            var employeeStorage = new EmployeeStorage();
-            EmployeeService testEmployeeService = new EmployeeService(employeeStorage);
+            var testEmployeeService = new EmployeeService();           
             Assert.Throws<PersonSeriesOfPassportValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutSeriesOfPassort));
         }
 
         [Fact]
-
         public void EmployeeNumberOfPassportValidationExceptionTest()
         {
             //Arrange
@@ -56,13 +52,11 @@ namespace ServiceTests
             employeeWithoutNumberOfPassort.Position = "Программист";
 
             //Act Assert
-            var employeeStorage = new EmployeeStorage();
-            EmployeeService testEmployeeService = new EmployeeService(employeeStorage);
+            var testEmployeeService = new EmployeeService();
             Assert.Throws<PersonNumberOfPassportValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutNumberOfPassort));
         }
 
         [Fact]
-
         public void EmployeePositionValidationExceptionTest()
         {
             //Arrange
@@ -72,10 +66,9 @@ namespace ServiceTests
             employeeWithoutPosition.NumberOfPassport = 3264567;
 
             //Act Assert
-            var employeeStorage = new EmployeeStorage();
-            EmployeeService testEmployeeService = new EmployeeService(employeeStorage); ;
+            var testEmployeeService = new EmployeeService();
             Assert.Throws<EmployeePositionValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutPosition));
-        }
+        }      
     }
 }
 

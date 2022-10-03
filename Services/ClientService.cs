@@ -1,120 +1,214 @@
-﻿
-using Bogus.DataSets;
+﻿using Microsoft.EntityFrameworkCore;
 using Models;
+using ModelsDb;
+using ModelsDb.Data;
 using Services.Exceptions;
 using Services.Filtres;
-using Services.Storages;
 
 namespace Services
 {
     public class ClientService
     {
-        private readonly IClientStorage _clientStorage;
-        
-        public ClientService(IClientStorage clientStorage)
+        ApplicationContext _dbContext;
+
+        public ClientService()
         {
-            _clientStorage = clientStorage;
+            _dbContext = new ApplicationContext();
         }
 
-        public void AddNewClient(Client client)
+        public Client GetClient(Guid clientId)
         {
-            if (_clientStorage.Data.ContainsKey(client))
+            var client = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);          
+
+            if (client == null)
+                throw new PersonDoesntExistException("Указанного клиента не сущетсвует");
+
+            return ClientMapping(client);
+        }
+
+        public List<Client> GetClients(ClientFilter filter)
+        {
+            var clientsDb = _dbContext.Clients.AsQueryable();
+
+            if (filter.FirstName != null)
+                clientsDb = clientsDb.Where(s => s.FirstName == filter.FirstName);
+
+            if (filter.LastName != null)
+                clientsDb = clientsDb.Where(s => s.LastName == filter.LastName);
+
+            if (filter.NumberOfPassport != null)
+                clientsDb = clientsDb.Where(s => s.NumberOfPassport == filter.NumberOfPassport);
+
+            if (filter.MinDateTime != null)
+                clientsDb = clientsDb.Where(s => s.DateOfBirth <= filter.MinDateTime);
+
+            if (filter.MaxDateTime != null)
+                clientsDb = clientsDb.Where(s => s.DateOfBirth >= filter.MaxDateTime);
+
+            var paginatedClients = clientsDb.Skip(filter.Page - 1).Take(filter.PageSize).ToList();
+
+            var clients = new List<Client>();
+            foreach (var client in paginatedClients)
+            {
+                clients.Add(ClientMapping(client));
+            }
+
+            return clients;
+        }
+
+        public void AddClient(Client client)
+        {
+            var clientDb = ClientMapping(client);
+
+            if (_dbContext.Clients.Contains(clientDb))
                 throw new PersonAlreadyExistException("Данный клиент уже существует");
 
-            if (((DateTime.Now - client.DateOfBirth).Days/365) < 18)
+            if (((DateTime.Now - clientDb.DateOfBirth).Days / 365) < 18)
                 throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
 
-            if (string.IsNullOrEmpty(client.SeriesOfPassport))
+            if (string.IsNullOrEmpty(clientDb.SeriesOfPassport))
                 throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
 
-            if (client.NumberOfPassport == null)
+            if (clientDb.NumberOfPassport == null)
                 throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            _clientStorage.Add(client);            
+            var newAccount = new AccountDb
+            {
+                AccountId = Guid.NewGuid(),
+                Clientid = clientDb.ClientId,
+                CurrencyCode = 643
+            };
+
+            _dbContext.Accounts.Add(newAccount);
+            _dbContext.Clients.Add(clientDb);
+            _dbContext.SaveChanges();
         }
 
         public void UpdateClient(Client client)
         {
-            var existindClient = _clientStorage.Data.FirstOrDefault(s => s.Key.NumberOfPassport == client.NumberOfPassport).Key;
+            var priorClient = _dbContext.Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
 
-            if (!_clientStorage.Data.ContainsKey(existindClient))
-                    throw new PersonDoesntExistException("Указанный клиент не существует");
+            if (!_dbContext.Clients.Contains(priorClient))
+                throw new PersonAlreadyExistException("Данного клиента не существует");
 
-            _clientStorage.Update(client);
+            priorClient.FirstName = client.FirstName;
+            priorClient.LastName = client.LastName;
+            priorClient.NumberOfPassport = client.NumberOfPassport;
+            priorClient.SeriesOfPassport = client.SeriesOfPassport;
+            priorClient.Phone = client.Phone;
+            priorClient.DateOfBirth = client.DateOfBirth;
+            priorClient.Accounts = ClientMapping(client).Accounts;
+            priorClient.BonusDiscount = client.BonusDiscount;
+
+            _dbContext.SaveChanges();
         }
 
-        public void DeleteClient(Client client)
+        public void DeleteClient(Guid clientId)
         {
-            if (!_clientStorage.Data.ContainsKey(client))
+            var requiredClient = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
+
+            if (requiredClient == null)
                 throw new PersonDoesntExistException("Указанного клиента не сущетсвует");
+            else
+                _dbContext.Clients.Remove(requiredClient);
 
-            _clientStorage.Delete(client);
+            _dbContext.SaveChanges();
         }
 
-        public void AddAccount(Client client, Account account)
+        public Account GetAccount(Guid accountId)
         {
-            var clientDict = _clientStorage.Data;
+            var account = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
 
-            if (clientDict.ContainsKey(client))
-                throw new PersonAlreadyExistException("Указанный клиент уже существует");
+            if (account == null)
+                throw new AccountDoesntExistException("Указанного аккаунта не сущетсвует");
 
-            if (clientDict[client].Contains(account))
-                throw new AccountAlreadyExistException("Клиент уже содержит указанный аккаунт");
-
-            _clientStorage.AddAccount(client, account);
+            return AccountMapping(account);
         }
 
-        public void UpdateAccount(Client client, Account account)
+        public void AddAccount(Account account)
+        {         
+            if (account.Clientid == null)
+                throw new AccountDoesntExistException("Данный аккаунт не привязан ни к одному клиенту");
+
+            _dbContext.Accounts.Add(AccountMapping(account));
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteAccount(Guid accountId)
         {
-            var clientDict = _clientStorage.Data;
-            var accounts = clientDict[client];
-            var accountExist = clientDict[client].Any(s => s.Currency.Name == account.Currency.Name);
-            
-            if (!clientDict.ContainsKey(client))
-                throw new PersonDoesntExistException("Указанного клиента не существует");
+            var account = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
 
-            if (!accountExist)
-                throw new AccountDoesntExistException("Клиент не имеет указанного аккаунта");
-
-            _clientStorage.UpdateAccount(client, account);
+            if (account == null)
+                throw new AccountDoesntExistException("Указанного аккаунта не сущетсвует");
+            else
+                _dbContext.Accounts.Remove(account);
+      
+            _dbContext.SaveChanges();
         }
 
-        public void DeleteAccount(Client client, Account account)
+        public void UpdateAccount(Account account)
+        {      
+            var priorAccount = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == account.AccountId);
+            var accountOwner = _dbContext.Clients.FirstOrDefault(c => c.ClientId == priorAccount.Clientid);
+
+            if (!accountOwner.Accounts.Select(x => x.Clientid).Contains(priorAccount.Clientid))
+                throw new PersonAlreadyExistException("Данного аккаунта не существует");
+
+            priorAccount.Amount = account.Amount;
+
+            _dbContext.SaveChanges();
+        }
+
+        private ClientDb ClientMapping(Client client)
         {
-            var clientDict = _clientStorage.Data;
-
-            if (!clientDict.ContainsKey(client))
-                throw new PersonDoesntExistException("Указанного клиента не существует");
-
-            if (!clientDict[client].Contains(account))
-                throw new AccountDoesntExistException("Клиент не имеет указанного аккаунта");
-
-            _clientStorage.DeleteAccount(client, account);
+            return new ClientDb()
+            {
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                NumberOfPassport = client.NumberOfPassport,
+                SeriesOfPassport = client.SeriesOfPassport,
+                Phone = client.Phone,
+                DateOfBirth = client.DateOfBirth,
+                BonusDiscount = client.BonusDiscount,
+                ClientId = client.ClientId
+            };
         }
-        public Dictionary<Client, List<Account>> GetClients(ClientFilter filter)
+
+        private Client ClientMapping(ClientDb client)
         {
-            var clientDict = _clientStorage.Data;
-
-            var result = clientDict.AsEnumerable();
-
-            if (filter.FirstName != null)
-                result = result.Where(s => s.Key.FirstName == filter.FirstName);
-
-            if (filter.LastName != null)
-                result =  result.Where(s => s.Key.LastName == filter.LastName);
-
-            if(filter.NumberOfPassport != null)
-                result  = result.Where(s => s.Key.NumberOfPassport == filter.NumberOfPassport);
-
-            if (filter.MinDateTime != null)
-                result = result.Where(s => s.Key.DateOfBirth <= filter.MinDateTime);
-
-            if (filter.MaxDateTime != null)
-                result = result.Where(s => s.Key.DateOfBirth >= filter.MaxDateTime);
-
-            return new Dictionary<Client, List < Account>>(result);
+            return new Client()
+            {
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                NumberOfPassport = client.NumberOfPassport,
+                SeriesOfPassport = client.SeriesOfPassport,
+                Phone = client.Phone,
+                DateOfBirth = client.DateOfBirth,
+                BonusDiscount = client.BonusDiscount,
+                ClientId = client.ClientId
+            };
         }
- 
+
+        private AccountDb AccountMapping(Account account)
+        {
+            return new AccountDb()
+            { AccountId = account.AccountId,
+              Clientid = account.Clientid,
+              CurrencyCode = account.CurrencyCode,
+              Amount = account.Amount
+            };
+        }
+
+        private Account AccountMapping(AccountDb account)
+        {
+            return new Account()
+            {
+                AccountId = account.AccountId,
+                Clientid = account.Clientid,
+                CurrencyCode = account.CurrencyCode,
+                Amount = account.Amount
+            };
+        }
     }
 }
    

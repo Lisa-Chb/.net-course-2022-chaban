@@ -1,10 +1,9 @@
-﻿using Services;
-using Models;
-using System.Security.Cryptography.X509Certificates;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Numerics;
+﻿using System.Diagnostics;
 using Bogus;
+using Models;
+using Services;
+
+namespace PracticeWithTypes;
 
 public class Program
 {
@@ -88,6 +87,3 @@ public class Program
         Console.WriteLine($" Runtime {nameOfMethod}" + " " + stopwatch.ElapsedTicks);
     }
 }
-
-
-

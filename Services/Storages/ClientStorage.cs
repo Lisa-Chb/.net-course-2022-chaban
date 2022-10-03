@@ -1,9 +1,6 @@
 ﻿using Models;
-using Services.Exceptions;
-using Services.Storages;
-using System.Runtime.Intrinsics.X86;
 
-namespace Services
+namespace Services.Storages
 {
     public class ClientStorage : IClientStorage
     {
@@ -16,10 +13,10 @@ namespace Services
 
         public void Add(Client client)
         {
+            
+            var account = new Account();
             var currency = new Currency();
             currency.Name = "USD";
-
-            var account = new Account();
             account.Currency = currency;
             var newAcccountList = new List<Account>();
             newAcccountList.Add(account);
