@@ -1,4 +1,8 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Services.Filtres
 {
@@ -17,9 +21,5 @@ namespace Services.Filtres
         public DateTime? MaxDateTime { get; set; }
 
         public string Position { get; set; }
-
-        public int Page { get; set; } = 1;
-
-        public int PageSize { get; set; }
     }
 }

@@ -1,6 +1,14 @@
 ﻿using Models;
+using Services.Exceptions;
+using Services.Storages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Services.Storages
+namespace Services
 {
     public class EmployeeStorage : IEmployeeStorage
     {

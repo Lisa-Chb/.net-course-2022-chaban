@@ -8,9 +8,7 @@ namespace Models
 {
     public class Client : Person
     {
-        public Guid ClientId { get; set; }
-
-        public List<Account> Accounts { get; set; }
+        public int? AccountNumber { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -23,6 +21,7 @@ namespace Models
             var client = (Client)obj;
             return client.FirstName == FirstName &&
                 client.LastName == LastName &&
+                client.AccountNumber == AccountNumber &&
                 client.DateOfBirth == DateOfBirth &&
                 client.Phone == Phone &&
                 client.SeriesOfPassport == SeriesOfPassport &&
@@ -32,7 +31,7 @@ namespace Models
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine(FirstName, LastName, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport, BonusDiscount);
+            return HashCode.Combine(FirstName, LastName, AccountNumber, DateOfBirth, Phone, SeriesOfPassport, NumberOfPassport, BonusDiscount);
         }
     }
 }

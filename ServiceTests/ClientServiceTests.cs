@@ -1,8 +1,11 @@
-﻿using Bogus;
-using Models;
+﻿using Models;
 using Services;
 using Services.Exceptions;
-using Services.Filtres;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ServiceTests
@@ -10,294 +13,70 @@ namespace ServiceTests
     public class ClientServiceTests
     {
         [Fact]
-        public void AddGetClientTest()
+
+        public void ClientAgeValidationExceptionTest()
         {
             //Arrange
-            var service = new ClientService();
+            var clientWithoutAge= new Client();
+            clientWithoutAge.DateOfBirth = new DateTime(year: 2007, 5, 6);
+            clientWithoutAge.SeriesOfPassport = "I-ПР";
+            clientWithoutAge.NumberOfPassport = 356223435;
 
-            TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
-            List<Client> clients = generatorClient.Generate(5);
-
-            var client = new Client
-            {
-                FirstName = "Александр",
-                LastName = "Александров",
-                NumberOfPassport = 25499,
-                SeriesOfPassport = "876768",
-                Phone = "77956734",
-                DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime(),
-                BonusDiscount = 5,
-                ClientId = Guid.NewGuid()
-            };
-
-            //Act
-            foreach (var c in clients)
-            {
-                service.AddClient(c);
-            }
-            service.AddClient(client);
-
-            var getClient = service.GetClient(client.ClientId);
-
-            //Assert
-            Assert.Equal(getClient, client);
+            //Act Assert
+            ClientService testClientService = new ClientService(new ClientStorage());
+            Assert.Throws<PersonAgeValidationException>(() => testClientService.AddNewClient(clientWithoutAge));
         }
 
         [Fact]
-        public void GetClientsTest()
+
+        public void ClientSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
-            var service = new ClientService();
+            var clientWithoutSeriesOfPassort = new Client();
+            clientWithoutSeriesOfPassort.NumberOfPassport = 356223435;
+            clientWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
 
-            TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
-            List<Client> clients = generatorClient.Generate(5);
-
-            var clientTom = new Client()
-            {
-                FirstName = "Tom",
-                LastName = "Holland",
-                Phone = "77768000",
-                NumberOfPassport = 9854,
-                SeriesOfPassport = "657755",
-                ClientId = Guid.NewGuid(),
-                BonusDiscount = 0,
-                DateOfBirth = new DateTime(2000, 8, 12).ToUniversalTime()
-            };
-
-            var filter = new ClientFilter
-            {
-                FirstName = "Tom",
-                PageSize = 1
-            };
-
-            //Act
-            foreach (var c in clients)
-            {
-                service.AddClient(c);
-            }
-            service.AddClient(clientTom);
-
-            //Assert
-            Assert.True(service.GetClients(filter).Count == 1);
-            Assert.True(service.GetClients(filter).FirstOrDefault().FirstName == "Tom");
+            //Act Assert
+            ClientService testClientService = new ClientService(new ClientStorage());
+            Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutSeriesOfPassort));
         }
 
         [Fact]
-        public void DeleteClientTest()
+
+        public void ClientNumberOfPassportValidationExceptionTest()
         {
             //Arrange
-            var service = new ClientService();
-
-            var clientId = Guid.NewGuid();
-            var client = new Client
-            {
-                FirstName = "Пауо",
-                LastName = "Коэльо",
-                NumberOfPassport = 7777,
-                SeriesOfPassport = "666666",
-                Phone = "77956730",
-                DateOfBirth = new DateTime(1996, 8, 12).ToUniversalTime(),
-                BonusDiscount = 5,
-                ClientId = clientId
-            };
-
-            //Act
-            service.AddClient(client);
-
-            var getClient = service.GetClient(clientId);
-
-            Assert.Equal(getClient, client);
-
-            service.DeleteClient(clientId);
-
-            //Assert
-            Assert.Throws<PersonDoesntExistException>(() =>
-            {
-                service.GetClient(clientId);
-            });
+            var clientWithoutNumberOfPassort = new Client();
+            clientWithoutNumberOfPassort.DateOfBirth = new DateTime(year:1998, 5, 5);
+            clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
+            
+            //Act Assert
+            ClientService testClientService = new ClientService(new ClientStorage());
+            Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddNewClient(clientWithoutNumberOfPassort));
         }
 
         [Fact]
-        public void UpdateClientTest()
+
+        public void ClientAlreadyExistExceptionTest()
         {
             //Arrange
-            var service = new ClientService();
+            ClientService testClientService = new ClientService(new ClientStorage());
 
-            var clientId = Guid.NewGuid();
-            var client = new Client
-            {
-                FirstName = "Пауо",
-                LastName = "Коэльо",
-                NumberOfPassport = 7777,
-                SeriesOfPassport = "666666",
-                Phone = "77956730",
-                DateOfBirth = new DateTime(1996, 8, 12).ToUniversalTime(),
-                BonusDiscount = 5,
-                ClientId = clientId
-            };
+            var dictionaryClient = new Client();
+            dictionaryClient.DateOfBirth = new DateTime(year: 1998, 5, 5);
+            dictionaryClient.SeriesOfPassport = "I-ПР";
+            dictionaryClient.NumberOfPassport = 356223435;
 
-            var updateClient = new Client
-            {
-                FirstName = "Говард",
-                LastName = "Лавкрафт",
-                NumberOfPassport = 7777,
-                SeriesOfPassport = "666666",
-                Phone = "77956730",
-                DateOfBirth = new DateTime(1996, 8, 12).ToUniversalTime(),
-                BonusDiscount = 10,
-                ClientId = clientId
-            };
+            var client = new Client();
+            client.DateOfBirth = new DateTime(year: 1998, 5, 5);
+            client.SeriesOfPassport = "I-ПР";
+            client.NumberOfPassport = 356223435;
 
-            //Act
-            service.AddClient(client);
-            var getClient = service.GetClient(clientId);
-
-            service.UpdateClient(updateClient);
-            var updatedCl = service.GetClient(clientId);
-
-            Assert.Equal(client, getClient);
-
-            //Assert
-            Assert.Equal(updateClient.FirstName, updatedCl.FirstName);
-        }
+            testClientService.AddNewClient(dictionaryClient);
 
 
-        [Fact]
-        public void AddGetAccountTest()
-        {
-            //Arrange
-            var service = new ClientService();
-
-            var accountId = Guid.NewGuid();
-            var clientId = Guid.NewGuid();
-
-            var client = new Client
-            {
-                FirstName = "Павел",
-                LastName = "Коэльо",
-                NumberOfPassport = 6666,
-                SeriesOfPassport = "111986",
-                Phone = "77956730",
-                DateOfBirth = new DateTime(1990, 8, 12).ToUniversalTime(),
-                BonusDiscount = 5,
-                ClientId = clientId
-            };
-
-            var account = new Account
-            {
-                AccountId = accountId,
-                Clientid = clientId,
-                CurrencyCode = 840,
-                Amount = 23546364
-            };
-
-            //Act
-            service.AddClient(client);
-            service.AddAccount(account);
-
-            var getAccount = service.GetAccount(accountId);
-
-            //Assert
-            Assert.Equal(account.Amount, getAccount.Amount);
-        }
-
-        [Fact]
-        public void UpdateAccountTest()
-        {
-            //Arrange
-            var service = new ClientService();
-
-            var accountId = Guid.NewGuid();
-            var clientId = Guid.NewGuid();
-
-            var client = new Client
-            {
-                FirstName = "Павел",
-                LastName = "Коэльо",
-                NumberOfPassport = 9997,
-                SeriesOfPassport = "111666",
-                Phone = "77956730",
-                DateOfBirth = new DateTime(1990, 8, 12).ToUniversalTime(),
-                BonusDiscount = 5,
-                ClientId = clientId
-            };
-
-            var account = new Account
-            {
-                AccountId = accountId,
-                Clientid = clientId,
-                CurrencyCode = 840,
-                Amount = 23546364
-            };
-
-            var updateAccount = new Account
-            {
-                AccountId = accountId,
-                Clientid = clientId,
-                CurrencyCode = 840,
-                Amount = 10000000
-            };
-
-            //Act
-            service.AddClient(client);
-            service.AddAccount(account);
-
-            var getAccount = service.GetAccount(accountId);
-
-            Assert.Equal(account.Amount, getAccount.Amount);
-
-            service.UpdateAccount(updateAccount);
-            var updatedAcc = service.GetAccount(accountId);
-
-            //Assert
-            Assert.Equal(updateAccount.Amount, updatedAcc.Amount);
-        }
-
-        [Fact]
-        public void DeleteAccountTest()
-        {
-            //Arrange
-            var service = new ClientService();
-
-            var accountId = Guid.NewGuid();
-            var clientId = Guid.NewGuid();
-
-            var client = new Client
-            {
-                FirstName = "Иван",
-                LastName = "Иванов",
-                NumberOfPassport = 4444,
-                SeriesOfPassport = "333986",
-                Phone = "77956730",
-                DateOfBirth = new DateTime(1990, 8, 12).ToUniversalTime(),
-                BonusDiscount = 5,
-                ClientId = clientId
-            };
-
-            var account = new Account
-            {
-                AccountId = accountId,
-                Clientid = clientId,
-                CurrencyCode = 840,
-                Amount = 23546364
-            };
-
-            //Act
-            service.AddClient(client);
-            service.AddAccount(account);
-
-            var getAccount = service.GetAccount(accountId);
-
-            Assert.Equal(account.Amount, getAccount.Amount);
-            service.DeleteAccount(accountId);
-
-            //Assert
-            Assert.Throws<AccountDoesntExistException>(() =>
-            {
-                service.GetAccount(accountId);
-            });
+            //Act Assert
+            Assert.Throws<PersonAlreadyExistException>(() => testClientService.AddNewClient(client));
         }
     }
 }

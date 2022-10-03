@@ -26,13 +26,14 @@ namespace ServiceTests
             testClientInTheDict.LastName = "Depp";          
 
             Account firstAccountInTheDict = new Account();
-
+            Currency testCurrency_RUB = new Currency("RUB", 5637);
             firstAccountInTheDict.Amount = 157000;         
-              
+            firstAccountInTheDict.Currency = testCurrency_RUB;      
 
             Account secondAccountInTheDict = new Account();
+            Currency testCurrency_USD = new Currency("USD", 7359);
             secondAccountInTheDict.Amount = 957420;
-         
+            secondAccountInTheDict.Currency = testCurrency_USD;
 
             //Добавление аккаунтов в список
             List<Account> testAccountList = new List<Account>();
