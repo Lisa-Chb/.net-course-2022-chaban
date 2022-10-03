@@ -1,0 +1,4 @@
+﻿ClientId;FirstName;LastName;NumberOfPassport;SeriesOfPassport;Phone;DateOfBirth;BonusDiscount
+0665b9cc-6ca3-4351-b20f-2aa1e392bd16;StreamTest;Wick;2367;PR -56;077888876;05/05/2000 21:00:00;0
+f2edc18f-1662-4040-8c88-d3e3b7166886;StreamTest;Dave;2367;PR -96;077888875;05/05/2000 21:00:00;0
+802610d8-6bab-4160-bff0-f068762edf12;StreamTest;Sames;2367;PR -56;077888874;05/05/2000 21:00:00;0

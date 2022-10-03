@@ -6,7 +6,7 @@ using Xunit;
 namespace ServiceTests
 {
     public class ClientFilterTest
-    {
+    {    
         [Fact]
 
         public void SelectClientWithNameTest()

@@ -63,7 +63,7 @@ namespace Services
             if (_dbContext.Clients.Contains(clientDb))
                 throw new PersonAlreadyExistException("Данный клиент уже существует");
 
-            if (((DateTime.Now - clientDb.DateOfBirth).Days / 365) < 18)
+            if (((DateTime.Now.ToUniversalTime() - clientDb.DateOfBirth).Days / 365) < 18)
                 throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
 
             if (string.IsNullOrEmpty(clientDb.SeriesOfPassport))
@@ -96,7 +96,7 @@ namespace Services
             priorClient.NumberOfPassport = client.NumberOfPassport;
             priorClient.SeriesOfPassport = client.SeriesOfPassport;
             priorClient.Phone = client.Phone;
-            priorClient.DateOfBirth = client.DateOfBirth;
+            priorClient.DateOfBirth = client.DateOfBirth.ToUniversalTime();
             priorClient.Accounts = ClientMapping(client).Accounts;
             priorClient.BonusDiscount = client.BonusDiscount;
 
@@ -168,7 +168,7 @@ namespace Services
                 NumberOfPassport = client.NumberOfPassport,
                 SeriesOfPassport = client.SeriesOfPassport,
                 Phone = client.Phone,
-                DateOfBirth = client.DateOfBirth,
+                DateOfBirth = client.DateOfBirth.ToUniversalTime(),
                 BonusDiscount = client.BonusDiscount,
                 ClientId = client.ClientId
             };
@@ -183,7 +183,7 @@ namespace Services
                 NumberOfPassport = client.NumberOfPassport,
                 SeriesOfPassport = client.SeriesOfPassport,
                 Phone = client.Phone,
-                DateOfBirth = client.DateOfBirth,
+                DateOfBirth = client.DateOfBirth.ToUniversalTime(),
                 BonusDiscount = client.BonusDiscount,
                 ClientId = client.ClientId
             };
