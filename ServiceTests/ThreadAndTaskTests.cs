@@ -117,13 +117,11 @@ namespace ServiceTests
                 }
             });
 
-            var importClients = new List<Client>();
-
             var importThread = new Thread(() =>
             {
                 lock (lockObject)
                 {
-                    importClients = importService.ReadClientFromCsv();
+                    var importClients = importService.ReadClientFromCsv();
 
                     foreach (Client c in importClients)
                         clientService.AddClient(c);
