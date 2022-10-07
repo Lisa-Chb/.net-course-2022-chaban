@@ -25,7 +25,7 @@ namespace ExportTool
             if (!dirInfo.Exists)
                 dirInfo.Create();
 
-            var fullPath = GetFullPathToFile(_pathToDirectory, _csvFileName);
+            var fullPath = Path.Combine(_pathToDirectory, _csvFileName);
 
             using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
             {
@@ -50,7 +50,7 @@ namespace ExportTool
         {
             var clientList = new List<Client>();
 
-            string fullPath = GetFullPathToFile(_pathToDirectory, _csvFileName);
+            string fullPath = Path.Combine(_pathToDirectory, _csvFileName);
 
             using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
             {
@@ -85,10 +85,6 @@ namespace ExportTool
             }
 
             return clientList;
-        }
-        private string GetFullPathToFile(string pathToFile, string fileName)
-        {
-            return Path.Combine(pathToFile, fileName);
         }
     }
 }
