@@ -78,14 +78,13 @@ namespace ServiceTests
 
             //очищаю файлы перед работой, чтобы не добавлять в базу уже сущестующих клиентов после предыдущих тестов
             File.WriteAllText(@"C:\\Users\\Hi-tech\\source\\repos\\.net-course-2022-chaban\\ExportTool\\ExportData\\ClientImport.csv", null);
-            File.WriteAllText(@"C:\\Users\\Hi-tech\\source\\repos\\.net-course-2022-chaban\\ExportTool\\ExportData\\ClientExport.csv", null);
+            File.WriteAllText(@"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\ClientExport.csv", null);
 
             var clientService = new ClientService();
             var filter = new ClientFilter() { PageSize = 1000 };
 
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
-            var exportService = new ExportService(pathToDirectory, "ClientExport.csv");
-            var importService = new ExportService(pathToDirectory, "ClientImport.csv");        
+            var exportService = new ExportService();   
 
             var testDataGenerator = new TestDataGenerator();
             var generatorClient = testDataGenerator.CreateClientListGenerator();
@@ -105,7 +104,7 @@ namespace ServiceTests
             };
 
             clients.Add(clientTest);
-            importService.WriteClientToCsv(clients);
+            exportService.WriteClientToCsv(clients, pathToDirectory, "ClientImport.csv");
 
             //Act
             var exportThread = new Thread(() =>
@@ -113,7 +112,7 @@ namespace ServiceTests
                 lock (lockObject)
                 {
                     var exportClients = clientService.GetClients(filter);
-                    exportService.WriteClientToCsv(exportClients);
+                    exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
                 }
             });
 
@@ -121,7 +120,7 @@ namespace ServiceTests
             {
                 lock (lockObject)
                 {
-                    var importClients = importService.ReadClientFromCsv();
+                    var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
 
                     foreach (Client c in importClients)
                         clientService.AddClient(c);
@@ -134,7 +133,7 @@ namespace ServiceTests
 
             //Assert                  
             Assert.NotNull(clientService.GetClient(clientTest.ClientId));
-            Assert.NotEmpty(exportService.ReadClientFromCsv());
+            Assert.NotEmpty(exportService.ReadClientFromCsv(pathToDirectory, "ClientExport.csv"));
         }
     }
 }

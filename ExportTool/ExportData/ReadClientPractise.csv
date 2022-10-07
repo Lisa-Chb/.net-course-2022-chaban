@@ -1,4 +1,4 @@
 ﻿ClientId;FirstName;LastName;NumberOfPassport;SeriesOfPassport;Phone;DateOfBirth;BonusDiscount
-d42eb771-6e32-4ae2-8fb2-df08cb997f7c;StreamTest;Wick;2367;PR -56;077888876;05/05/2000 21:00:00;0
-039afcae-d605-4207-84ff-accd0c065b81;StreamTest;Dave;2367;PR -96;077888875;05/05/2000 21:00:00;0
-06215c0f-78c5-4e24-8687-dbaa1129f92d;StreamTest;Sames;2367;PR -56;077888874;05/05/2000 21:00:00;0
+267dd0f3-ace0-4161-92bb-60850536d3db;StreamTest;Wick;2367;PR -56;077888876;05/05/2000 21:00:00;0
+acfc3a56-aab8-4b64-bab2-b816e822faf8;StreamTest;Dave;2367;PR -96;077888875;05/05/2000 21:00:00;0
+eacf9a3e-ddc3-45a6-8e60-255d9d2dc76e;StreamTest;Sames;2367;PR -56;077888874;05/05/2000 21:00:00;0
