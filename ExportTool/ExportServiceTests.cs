@@ -20,11 +20,11 @@ namespace ExportTool
             var filter = new ClientFilter() { PageSize = 1000 };
             var clients = service.GetClients(filter);
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
-            var exportService = new ExportService(pathToDirectory, "WriteClientPractise.csv");
+            var exportService = new ExportService();
 
             //Act
-            exportService.WriteClientToCsv(clients);
-            var clientsRead = exportService.ReadClientFromCsv();
+            exportService.WriteClientToCsv(clients, pathToDirectory, "WriteClientPractise.csv");
+            var clientsRead = exportService.ReadClientFromCsv(pathToDirectory, "WriteClientPractise.csv");
 
             //Asssert
             Assert.Equal(clients.Count, clientsRead.Count);
@@ -69,10 +69,10 @@ namespace ExportTool
 
             //Act
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
-            var exportService = new ExportService(pathToDirectory, "ReadClientPractise.csv");
-            exportService.WriteClientToCsv(clients);
+            var exportService = new ExportService();
+            exportService.WriteClientToCsv(clients, pathToDirectory, "ReadClientPractise.csv");
 
-            var clientsRead = exportService.ReadClientFromCsv();
+            var clientsRead = exportService.ReadClientFromCsv(pathToDirectory, "ReadClientPractise.csv");
             foreach (var client in clientsRead)
             {
                 service.AddClient(client);

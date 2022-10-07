@@ -8,24 +8,14 @@ namespace ExportTool
 {
     public class ExportService
     {
-        private string _pathToDirectory { get; set; }
-        private string _csvFileName { get; set; }
-
-
-        public ExportService(string pathToDirectory, string csvFileName)
+   
+        public void WriteClientToCsv(List<Client> clients, string pathToDirectory, string csvFileName)
         {
-            _pathToDirectory = pathToDirectory;
-            _csvFileName = csvFileName;
-        }
-
-
-        public void WriteClientToCsv(List<Client> clients)
-        {
-            var dirInfo = new DirectoryInfo(_pathToDirectory);
+            var dirInfo = new DirectoryInfo(pathToDirectory);
             if (!dirInfo.Exists)
                 dirInfo.Create();
 
-            var fullPath = GetFullPathToFile(_pathToDirectory, _csvFileName);
+            var fullPath = Path.Combine(pathToDirectory, csvFileName);
 
             using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
             {
@@ -46,11 +36,11 @@ namespace ExportTool
             }
         }
 
-        public List<Client> ReadClientFromCsv()
+        public List<Client> ReadClientFromCsv(string pathToDirectory, string csvFileName)
         {
             var clientList = new List<Client>();
 
-            string fullPath = GetFullPathToFile(_pathToDirectory, _csvFileName);
+            string fullPath = Path.Combine(pathToDirectory, csvFileName);
 
             using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
             {
@@ -85,10 +75,6 @@ namespace ExportTool
             }
 
             return clientList;
-        }
-        private string GetFullPathToFile(string pathToFile, string fileName)
-        {
-            return Path.Combine(pathToFile, fileName);
         }
     }
 }
