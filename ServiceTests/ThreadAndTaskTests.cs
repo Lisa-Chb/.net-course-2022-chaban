@@ -37,7 +37,7 @@ namespace ServiceTests
                     lock (lockObject)
                     {
                         accountTest.Amount += 100;
-                        Thread.Sleep(100);
+                        Thread.Sleep(10000);
                         _output.WriteLine($"Поток {Thread.CurrentThread.Name} начислил 100. Текущий счет {accountTest.Amount}");
                     }
                 }
@@ -54,7 +54,7 @@ namespace ServiceTests
                     lock (lockObject)
                     {
                         accountTest.Amount += 100;
-                        Thread.Sleep(100);
+                        Thread.Sleep(10000);
                         _output.WriteLine($"Поток {Thread.CurrentThread.Name} начислил 100. Текущий счет  {accountTest.Amount}");
                     }
                 }
@@ -67,7 +67,7 @@ namespace ServiceTests
             Thread.Sleep(20000);
 
             //Assert
-            Assert.Equal(accountTest.Amount, 2000);
+            Assert.Equal(accountTest.Amount, 200);
         }
 
         [Fact]
@@ -80,7 +80,8 @@ namespace ServiceTests
             File.WriteAllText(@"C:\\Users\\Hi-tech\\source\\repos\\.net-course-2022-chaban\\ExportTool\\ExportData\\ClientImport.csv", null);
             File.WriteAllText(@"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\ClientExport.csv", null);
 
-            var clientService = new ClientService();
+            var clientServiceExportThread = new ClientService();
+            var clientServiceImportThread = new ClientService();
             var filter = new ClientFilter() { PageSize = 1000 };
 
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
@@ -109,22 +110,23 @@ namespace ServiceTests
             //Act
             var exportThread = new Thread(() =>
             {
-                lock (lockObject)
-                {
-                    var exportClients = clientService.GetClients(filter);
+
+                var exportClients = clientServiceExportThread.GetClients(filter);
                     exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
-                }
+
             });
 
             var importThread = new Thread(() =>
             {
-                lock (lockObject)
-                {
+
                     var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
 
                     foreach (Client c in importClients)
-                        clientService.AddClient(c);
+                {
+                    clientServiceImportThread.AddClient(c);
+                    Thread.Sleep(100);
                 }
+
             });
 
             exportThread.Start();
@@ -132,7 +134,7 @@ namespace ServiceTests
             Thread.Sleep(20000);
 
             //Assert                  
-            Assert.NotNull(clientService.GetClient(clientTest.ClientId));
+            Assert.NotNull(clientServiceImportThread.GetClient(clientTest.ClientId));
             Assert.NotEmpty(exportService.ReadClientFromCsv(pathToDirectory, "ClientExport.csv"));
         }
     }
