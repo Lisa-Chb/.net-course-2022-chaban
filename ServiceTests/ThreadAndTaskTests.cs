@@ -17,6 +17,61 @@ namespace ServiceTests
         }
 
         [Fact]
+        public void RateUpdaterTest()
+        {
+            var cancellationtTokenSource = new CancellationTokenSource();
+            var token = cancellationtTokenSource.Token;
+
+            var service = new ClientService();
+            var filter = new ClientFilter() { PageSize = 100 };
+
+            var rateUpdater = new RateUpdater();
+            rateUpdater.StartAccrual(token, service, filter).Wait(20000);
+
+            cancellationtTokenSource.Cancel();
+        }
+
+        [Fact]
+        public void CaschDispenserTest()
+        {
+            //Arrange
+            var dicpenser = new CashDispenserService();
+
+            var testDataGenerator = new TestDataGenerator();
+            var generatorClient = testDataGenerator.CreateClientListGenerator();
+            var clients = generatorClient.Generate(10);
+            var service = new ClientService();
+
+            var accounts = new List<Account>();
+            
+            foreach (Client client in clients)
+            {
+                service.AddClient(client);
+                var account = new Account() { AccountId = Guid.NewGuid(), Amount = 250, Clientid = client.ClientId, CurrencyCode = 840 };
+                accounts.Add(account);
+                service.AddAccount(account);
+            }
+
+            //Act
+            var taskCollection = new List<Task>();
+
+            for (int i = 0; i <= 9; i++)
+            {
+                taskCollection.Add(dicpenser.CashDispencer(accounts[i].AccountId));             
+            }
+
+            foreach(var task in taskCollection)
+            {
+               task.Wait();
+            }
+
+            //Assert
+            var serviseToGetAccount = new ClientService();
+            var testAccount = serviseToGetAccount.GetAccount(accounts.FirstOrDefault().AccountId);
+            Assert.Equal(testAccount.Amount, 150);
+        }
+
+        [Fact]
         public void MultithreadedAmountTransferTest()
         {
             //Arrange                
@@ -74,8 +129,6 @@ namespace ServiceTests
         public void AddandReadClientTest()
         {
             //Arrange
-            var lockObject = new Object();
-
             //очищаю файлы перед работой, чтобы не добавлять в базу уже сущестующих клиентов после предыдущих тестов
             File.WriteAllText(@"C:\\Users\\Hi-tech\\source\\repos\\.net-course-2022-chaban\\ExportTool\\ExportData\\ClientImport.csv", null);
             File.WriteAllText(@"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\ClientExport.csv", null);
@@ -85,7 +138,7 @@ namespace ServiceTests
             var filter = new ClientFilter() { PageSize = 1000 };
 
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
-            var exportService = new ExportService();   
+            var exportService = new ExportService();
 
             var testDataGenerator = new TestDataGenerator();
             var generatorClient = testDataGenerator.CreateClientListGenerator();
@@ -112,16 +165,16 @@ namespace ServiceTests
             {
 
                 var exportClients = clientServiceExportThread.GetClients(filter);
-                    exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
+                exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
 
             });
 
             var importThread = new Thread(() =>
             {
 
-                    var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
+                var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
 
-                    foreach (Client c in importClients)
+                foreach (Client c in importClients)
                 {
                     clientServiceImportThread.AddClient(c);
                     Thread.Sleep(100);
