@@ -57,7 +57,7 @@ namespace ServiceTests
 
             for (int i = 0; i <= 9; i++)
             {
-                taskCollection.Add(dicpenser.CashDispencer(accounts[i].AccountId));             
+                taskCollection.Add(dicpenser.CashingOut(accounts[i].AccountId));             
             }
 
             foreach(var task in taskCollection)

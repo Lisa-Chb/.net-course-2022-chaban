@@ -5,7 +5,7 @@ namespace Services
 {
     public class CashDispenserService
     {
-        public Task CashDispencer(Guid accountId)
+        public Task CashingOut(Guid accountId)
         {
             return Task.Factory.StartNew(() =>
              {
@@ -17,13 +17,12 @@ namespace Services
                      if (account.Amount >= 10)
                      {
                          account.Amount -= 10;
-                         Thread.Sleep(1000);
+                         Task.Delay(500).Wait();
+                         clientService.UpdateAccount(account);
                      }
                      else
                          new InsufficientFundsInAccountException("Недостаточно средств на счете");
                  }
-
-                 clientService.UpdateAccount(account);
              });
         }
     }
