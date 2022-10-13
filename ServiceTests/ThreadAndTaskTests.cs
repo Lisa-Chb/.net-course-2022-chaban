@@ -45,8 +45,6 @@ namespace ServiceTests
 
             firstThread.Name = "ThreadA";
 
-
-
             var secondThread = new Thread(() =>
             {
                 for (int i = 0; i < 10; i++)
@@ -74,7 +72,6 @@ namespace ServiceTests
         public void AddandReadClientTest()
         {
             //Arrange
-            var lockObject = new Object();
 
             //очищаю файлы перед работой, чтобы не добавлять в базу уже сущестующих клиентов после предыдущих тестов
             File.WriteAllText(@"C:\\Users\\Hi-tech\\source\\repos\\.net-course-2022-chaban\\ExportTool\\ExportData\\ClientImport.csv", null);
@@ -84,7 +81,8 @@ namespace ServiceTests
             var filter = new ClientFilter() { PageSize = 1000 };
 
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
-            var exportService = new ExportService();   
+            var exportService = new ExportService();
+            var importService = new ExportService();
 
             var testDataGenerator = new TestDataGenerator();
             var generatorClient = testDataGenerator.CreateClientListGenerator();
@@ -109,21 +107,19 @@ namespace ServiceTests
             //Act
             var exportThread = new Thread(() =>
             {
-                lock (lockObject)
-                {
-                    var exportClients = clientService.GetClients(filter);
-                    exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
-                }
+                var exportClients = clientService.GetClients(filter);
+                exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
+                Thread.Sleep(1000);
             });
 
             var importThread = new Thread(() =>
             {
-                lock (lockObject)
-                {
-                    var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
+                var importClients = importService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
 
-                    foreach (Client c in importClients)
-                        clientService.AddClient(c);
+                foreach (Client c in importClients)
+                {
+                    clientService.AddClient(c);
+                    Thread.Sleep(100);
                 }
             });
 
