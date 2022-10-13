@@ -100,8 +100,6 @@ namespace ServiceTests
 
             firstThread.Name = "ThreadA";
 
-
-
             var secondThread = new Thread(() =>
             {
                 for (int i = 0; i < 10; i++)
@@ -139,6 +137,7 @@ namespace ServiceTests
 
             var pathToDirectory = @"C:\Users\Hi-tech\source\repos\.net-course-2022-chaban\ExportTool\ExportData\";
             var exportService = new ExportService();
+            var importService = new ExportService();
 
             var testDataGenerator = new TestDataGenerator();
             var generatorClient = testDataGenerator.CreateClientListGenerator();
@@ -163,20 +162,19 @@ namespace ServiceTests
             //Act
             var exportThread = new Thread(() =>
             {
-
-                var exportClients = clientServiceExportThread.GetClients(filter);
+                var exportClients = clientService.GetClients(filter);
                 exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
-
+                Thread.Sleep(1000);
             });
 
             var importThread = new Thread(() =>
             {
-
                 var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
 
                 foreach (Client c in importClients)
                 {
                     clientServiceImportThread.AddClient(c);
+
                     Thread.Sleep(100);
                 }
 
