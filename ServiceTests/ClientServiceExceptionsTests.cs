@@ -10,23 +10,21 @@ namespace ServiceTests
     public class ClientServiceExceptionsTests
     {
         [Fact]
-
-        public void ClientAgeValidationExceptionTest()
+        public async Task ClientAgeValidationExceptionTest()
         {
             //Arrange
-            var clientWithoutAge= new Client();
+            var clientWithoutAge = new Client();
             clientWithoutAge.DateOfBirth = new DateTime(year: 2007, 5, 6);
             clientWithoutAge.SeriesOfPassport = "I-ПР";
             clientWithoutAge.NumberOfPassport = 356223435;
 
             //Act Assert
-            ClientService testClientService = new ClientService();
-            Assert.Throws<PersonAgeValidationException>(() => testClientService.AddClient(clientWithoutAge));
+            var testClientService = new ClientService();
+            await Assert.ThrowsAsync<PersonAgeValidationException>(async () => await testClientService.AddClientAsync(clientWithoutAge));
         }
 
         [Fact]
-
-        public void ClientSeriesOfPassportValidationExceptionTest()
+        public async Task ClientSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
             var clientWithoutSeriesOfPassort = new Client();
@@ -34,27 +32,25 @@ namespace ServiceTests
             clientWithoutSeriesOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
 
             //Act Assert
-            ClientService testClientService = new ClientService();
-            Assert.Throws<PersonSeriesOfPassportValidationException>(() => testClientService.AddClient(clientWithoutSeriesOfPassort));
+            var testClientService = new ClientService();
+            await Assert.ThrowsAsync<PersonSeriesOfPassportValidationException>(async () => await testClientService.AddClientAsync(clientWithoutSeriesOfPassort));
         }
 
         [Fact]
-
-        public void ClientNumberOfPassportValidationExceptionTest()
+        public async Task ClientNumberOfPassportValidationExceptionTest()
         {
             //Arrange
             var clientWithoutNumberOfPassort = new Client();
-            clientWithoutNumberOfPassort.DateOfBirth = new DateTime(year:1998, 5, 5);
+            clientWithoutNumberOfPassort.DateOfBirth = new DateTime(year: 1998, 5, 5);
             clientWithoutNumberOfPassort.SeriesOfPassport = "I-ПР";
-            
+
             //Act Assert
             var testClientService = new ClientService();
-            Assert.Throws<PersonNumberOfPassportValidationException>(() => testClientService.AddClient(clientWithoutNumberOfPassort));
+            await Assert.ThrowsAsync<PersonNumberOfPassportValidationException>(async () => await testClientService.AddClientAsync(clientWithoutNumberOfPassort));
         }
 
         [Fact]
-
-        public void ClientAlreadyExistExceptionTest()
+        public async Task ClientAlreadyExistExceptionTest()
         {
             //Arrange
             var testClientService = new ClientService();
@@ -76,11 +72,10 @@ namespace ServiceTests
             client.NumberOfPassport = 356223435;
             client.ClientId = dictionaryClient.ClientId;
 
-            testClientService.AddClient(dictionaryClient);
-
+            await testClientService.AddClientAsync(dictionaryClient);
 
             //Act Assert
-            Assert.Throws<PersonAlreadyExistException>(() => testClientService.AddClient(client));
-        }      
+            await Assert.ThrowsAsync<PersonAlreadyExistException>(async () => await testClientService.AddClientAsync(client));
+        }
     }
 }

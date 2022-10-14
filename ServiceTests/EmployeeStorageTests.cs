@@ -1,5 +1,4 @@
-﻿
-using Services.Filtres;
+﻿using Services.Filtres;
 using Services;
 using Xunit;
 using Models;
@@ -9,7 +8,7 @@ namespace ServiceTests
     public class EmployeeStorageTests
     {
         [Fact]
-        public void SelectEmployeeWithNameTest()
+        public async Task SelectEmployeeWithNameTest()
         {
             //Arrange
             var testEmployeeService = new EmployeeService();
@@ -24,7 +23,7 @@ namespace ServiceTests
             employeeJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
             employeeJohn.Position = "Дизайнер";
             employeeJohn.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeJohn);
+            await testEmployeeService.AddNewEmployee(employeeJohn);
 
             var employeeTestName = new Employee();
             employeeTestName.EmployeeId = Guid.NewGuid();
@@ -36,7 +35,7 @@ namespace ServiceTests
             employeeTestName.DateOfBirth = new DateTime(1999, 5, 6).ToUniversalTime();
             employeeTestName.Position = "Программист";
             employeeTestName.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeTestName);
+            await testEmployeeService.AddNewEmployee(employeeTestName);
 
             var employeeEmily = new Employee();
             employeeEmily.EmployeeId = Guid.NewGuid();
@@ -48,20 +47,20 @@ namespace ServiceTests
             employeeEmily.DateOfBirth = new DateTime(1998, 5, 6).ToUniversalTime();
             employeeEmily.Position = "Программист";
             employeeEmily.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeEmily);
+            await testEmployeeService.AddNewEmployee(employeeEmily);
 
             var filter = new EmployeeFilter();
             filter.FirstName = "TestName";
             filter.PageSize = 10;
 
             //Act Assert
-            var expectedName = testEmployeeService.GetEmployees(filter).FirstOrDefault().FirstName;
-            Assert.Equal(expectedName, "TestName");
+            var expectedClients = await testEmployeeService.GetEmployees(filter);
+            Assert.Equal("TestName", expectedClients.FirstOrDefault().FirstName);
         }
 
 
         [Fact]
-        public void SelectEmployeeWithNumberOfPassportTest()
+        public async Task SelectEmployeeWithNumberOfPassportTest()
         {
             //Arrange
             var testEmployeeService = new EmployeeService();
@@ -76,7 +75,7 @@ namespace ServiceTests
             employeeJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
             employeeJohn.Position = "Дизайнер";
             employeeJohn.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeJohn);
+            await testEmployeeService.AddNewEmployee(employeeJohn);
 
             var employeeJohnToo = new Employee();
             employeeJohnToo.EmployeeId = Guid.NewGuid();
@@ -88,7 +87,7 @@ namespace ServiceTests
             employeeJohnToo.DateOfBirth = new DateTime(1999, 5, 6).ToUniversalTime();
             employeeJohnToo.Position = "Программист";
             employeeJohnToo.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeJohnToo);
+            await testEmployeeService.AddNewEmployee(employeeJohnToo);
 
             var employeeEmily = new Employee();
             employeeEmily.EmployeeId = Guid.NewGuid();
@@ -100,14 +99,15 @@ namespace ServiceTests
             employeeEmily.DateOfBirth = new DateTime(1998, 5, 6).ToUniversalTime();
             employeeEmily.Position = "Программист";
             employeeEmily.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeEmily);
+            await testEmployeeService.AddNewEmployee(employeeEmily);
 
             var filter = new EmployeeFilter();
             filter.NumberOfPassport = 0000;
             filter.PageSize = 10;
 
             //Act Assert
-            var expectedNumber = testEmployeeService.GetEmployees(filter).FirstOrDefault().NumberOfPassport;
+            var expectedEmployees = await testEmployeeService.GetEmployees(filter);
+            var expectedNumber = expectedEmployees.FirstOrDefault().NumberOfPassport;
             Assert.Equal(expectedNumber, 0000);
         }
 
@@ -168,9 +168,8 @@ namespace ServiceTests
         */
 
         [Fact]
-        public void SelectEmployeeWithPositionTest()
+        public async Task SelectEmployeeWithPositionTest()
         {
-
             //Arrange
             var testEmployeeService = new EmployeeService();
 
@@ -184,7 +183,7 @@ namespace ServiceTests
             employeeJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
             employeeJohn.Position = "Дизайнер";
             employeeJohn.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeJohn);
+            await testEmployeeService.AddNewEmployee(employeeJohn);
 
             var employeeJohnToo = new Employee();
             employeeJohnToo.EmployeeId = Guid.NewGuid();
@@ -196,7 +195,7 @@ namespace ServiceTests
             employeeJohnToo.DateOfBirth = new DateTime(1999, 5, 6).ToUniversalTime();
             employeeJohnToo.Position = "Программист";
             employeeJohnToo.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeJohnToo);
+            await testEmployeeService.AddNewEmployee(employeeJohnToo);
 
             var employeeEmily = new Employee();
             employeeEmily.EmployeeId = Guid.NewGuid();
@@ -208,15 +207,16 @@ namespace ServiceTests
             employeeEmily.DateOfBirth = new DateTime(1998, 5, 6).ToUniversalTime();
             employeeEmily.Position = "Тестовая должность";
             employeeEmily.Contract = "Принят на работу";
-            testEmployeeService.AddNewEmployee(employeeEmily);
+            await testEmployeeService.AddNewEmployee(employeeEmily);
 
             var filter = new EmployeeFilter();
             filter.Position = "Тестовая должность";
             filter.PageSize = 10;
 
             //Act Assert
-            var expectedPosition = testEmployeeService.GetEmployees(filter).FirstOrDefault().Position;
-            Assert.Equal(expectedPosition, "Тестовая должность");
+            var expectedEmployees = await testEmployeeService.GetEmployees(filter);
+            var expectedPosition = expectedEmployees.FirstOrDefault().Position;
+            Assert.Equal("Тестовая должность", expectedPosition);
         }
     }
 }

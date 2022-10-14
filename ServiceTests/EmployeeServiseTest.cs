@@ -9,7 +9,7 @@ namespace ServiceTests
     public class EmployeeServiseTest
     {
         [Fact]
-        public void AddGetEmployeeTest()
+        public async Task AddGetEmployeeTest()
         {
             //Arrange
             var testDataGenerator = new TestDataGenerator();
@@ -36,18 +36,18 @@ namespace ServiceTests
             //Act
             foreach (var e in employees)
             {
-                service.AddNewEmployee(e);
+                await service.AddNewEmployee(e);
             }          
          
-            service.AddNewEmployee(employee);
-            var getEmployee = service.GetEmployee(employee.EmployeeId);
+            await service.AddNewEmployee(employee);
+            var getEmployee = await service.GetEmployee(employee.EmployeeId);
 
             //Assert
             Assert.Equal(employee, getEmployee);
         }
 
         [Fact]
-        public void DeleteEmployeeTest()
+        public async Task DeleteEmployeeTest()
         {
             //Arrange
             var service = new EmployeeService();
@@ -69,21 +69,18 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddNewEmployee(employee);
+            await service.AddNewEmployee(employee);
 
-            var getEmployee = service.GetEmployee(employeeId);
+            var getEmployee = await service.GetEmployee(employeeId);
             Assert.True(getEmployee.SeriesOfPassport == employee.SeriesOfPassport);
-            service.DeleteEmployee(employeeId);
+            await service.DeleteEmployee(employeeId);
 
             //Assert
-            Assert.Throws<PersonDoesntExistException>(() =>
-            {
-                service.GetEmployee(employeeId);
-            });
+            await Assert.ThrowsAsync<PersonDoesntExistException>(async () => await service.GetEmployee(employeeId));
         }
 
         [Fact]
-        public void UpdateEmployeeTest()
+        public async Task UpdateEmployeeTest()
         {
             //Arrange
             var service = new EmployeeService();
@@ -120,13 +117,13 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddNewEmployee(employee);
-            var getEmployee = service.GetEmployee(employeeId);
+            await service.AddNewEmployee(employee);
+            var getEmployee = await service.GetEmployee(employeeId);
             Assert.Equal(employee, getEmployee);
 
-            service.UpdateEmployee(updateEmployee);
+            await service.UpdateEmployee(updateEmployee);
 
-            var updatedEmpl = service.GetEmployee(employeeId);
+            var updatedEmpl = await service.GetEmployee(employeeId);
 
             //Assert
             Assert.Equal(updateEmployee.FirstName, updatedEmpl.FirstName);

@@ -10,7 +10,7 @@ namespace ServiceTests
     public class ClientServiceTests
     {
         [Fact]
-        public void AddGetClientTest()
+        public async Task  AddGetClientTest()
         {
             //Arrange
             var service = new ClientService();
@@ -34,18 +34,19 @@ namespace ServiceTests
             //Act
             foreach (var c in clients)
             {
-                service.AddClient(c);
+                await service.AddClientAsync(c);
             }
-            service.AddClient(client);
 
-            var getClient = service.GetClient(client.ClientId);
+            await service.AddClientAsync(client);
+
+            var getClient = await service.GetClientAsync(client.ClientId);
 
             //Assert
             Assert.Equal(getClient, client);
         }
 
         [Fact]
-        public void GetClientsTest()
+        public async Task GetClientsTest()
         {
             //Arrange
             var service = new ClientService();
@@ -75,17 +76,20 @@ namespace ServiceTests
             //Act
             foreach (var c in clients)
             {
-                service.AddClient(c);
+                await service.AddClientAsync(c);
             }
-            service.AddClient(clientTom);
+            await service.AddClientAsync(clientTom);
 
             //Assert
-            Assert.True(service.GetClients(filter).Count == 1);
-            Assert.True(service.GetClients(filter).FirstOrDefault().FirstName == "Tom");
+            var clientsCount = await service.GetClientsAsync(filter);
+            var clientsName = await service.GetClientsAsync(filter);
+
+            Assert.True(clientsCount.Count == 1);
+            Assert.True(clientsName.FirstOrDefault().FirstName == "Tom");
         }
 
         [Fact]
-        public void DeleteClientTest()
+        public async Task DeleteClientTest()
         {
             //Arrange
             var service = new ClientService();
@@ -104,23 +108,20 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddClient(client);
+            await service.AddClientAsync(client);
 
-            var getClient = service.GetClient(clientId);
+            var getClient = await service.GetClientAsync(clientId);
 
             Assert.Equal(getClient, client);
 
-            service.DeleteClient(clientId);
+            await service.DeleteClientAsync(clientId);
 
             //Assert
-            Assert.Throws<PersonDoesntExistException>(() =>
-            {
-                service.GetClient(clientId);
-            });
+            await Assert.ThrowsAsync<PersonDoesntExistException>(async () => await service.GetClientAsync(clientId));          
         }
 
         [Fact]
-        public void UpdateClientTest()
+        public async Task UpdateClientTest()
         {
             //Arrange
             var service = new ClientService();
@@ -151,11 +152,11 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddClient(client);
-            var getClient = service.GetClient(clientId);
+            await service.AddClientAsync(client);
+            var getClient = await service.GetClientAsync(clientId);
 
-            service.UpdateClient(updateClient);
-            var updatedCl = service.GetClient(clientId);
+            await service.UpdateClientAsync(updateClient);
+            var updatedCl = await service.GetClientAsync(clientId);
 
             Assert.Equal(client, getClient);
 
@@ -165,7 +166,7 @@ namespace ServiceTests
 
 
         [Fact]
-        public void AddGetAccountTest()
+        public async Task AddGetAccountTest()
         {
             //Arrange
             var service = new ClientService();
@@ -194,17 +195,17 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddClient(client);
-            service.AddAccount(account);
+            await service.AddClientAsync(client);
+            await service.AddAccountAsync(account);
 
-            var getAccount = service.GetAccount(accountId);
+            var getAccount = await service.GetAccountAsync(accountId);
 
             //Assert
             Assert.Equal(account.Amount, getAccount.Amount);
         }
 
         [Fact]
-        public void UpdateAccountTest()
+        public async Task UpdateAccountTest()
         {
             //Arrange
             var service = new ClientService();
@@ -241,22 +242,22 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddClient(client);
-            service.AddAccount(account);
+            await service.AddClientAsync(client);
+            await service.AddAccountAsync(account);
 
-            var getAccount = service.GetAccount(accountId);
+            var getAccount = await service.GetAccountAsync(accountId);
 
             Assert.Equal(account.Amount, getAccount.Amount);
 
-            service.UpdateAccount(updateAccount);
-            var updatedAcc = service.GetAccount(accountId);
+            await service.UpdateAccountAsync(updateAccount);
+            var updatedAcc = await service.GetAccountAsync(accountId);
 
             //Assert
             Assert.Equal(updateAccount.Amount, updatedAcc.Amount);
         }
 
         [Fact]
-        public void DeleteAccountTest()
+        public async Task DeleteAccountTest()
         {
             //Arrange
             var service = new ClientService();
@@ -285,19 +286,16 @@ namespace ServiceTests
             };
 
             //Act
-            service.AddClient(client);
-            service.AddAccount(account);
+            await service.AddClientAsync(client);
+            await  service.AddAccountAsync(account);
 
-            var getAccount = service.GetAccount(accountId);
+            var getAccount = await service.GetAccountAsync(accountId);
 
             Assert.Equal(account.Amount, getAccount.Amount);
-            service.DeleteAccount(accountId);
+            await service.DeleteAccountAsync(accountId);
 
             //Assert
-            Assert.Throws<AccountDoesntExistException>(() =>
-            {
-                service.GetAccount(accountId);
-            });
+            await Assert.ThrowsAsync<AccountDoesntExistException>(async () =>  await service.GetAccountAsync(accountId));         
         }
     }
 }
