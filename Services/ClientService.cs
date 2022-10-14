@@ -17,9 +17,9 @@ namespace Services
             _dbContext = new ApplicationContext();
         }
 
-        public Client GetClient(Guid clientId)
+        public async Task<Client> GetClientAsync(Guid clientId)
         {
-            var client = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);          
+            var client = await _dbContext.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);          
 
             if (client == null)
                 throw new PersonDoesntExistException("Указанного клиента не сущетсвует");
@@ -27,7 +27,7 @@ namespace Services
             return ClientMapping(client);
         }
 
-        public List<Client> GetClients(ClientFilter filter)
+        public async Task<List<Client>> GetClientsAsync(ClientFilter filter)
         {
             var clientsDb = _dbContext.Clients.AsQueryable();
 
@@ -46,10 +46,12 @@ namespace Services
             if (filter.MaxDateTime != null)
                 clientsDb = clientsDb.Where(s => s.DateOfBirth >= filter.MaxDateTime);
 
-            var paginatedClients = clientsDb.Skip(filter.Page - 1).Take(filter.PageSize).ToList();
+            var paginatedClientsQuery = clientsDb.Skip(filter.Page - 1).Take(filter.PageSize);
+            var paginatedClientsData = await paginatedClientsQuery.ToListAsync();
 
             var clients = new List<Client>();
-            foreach (var client in paginatedClients)
+
+            foreach (var client in paginatedClientsQuery)
             {
                 clients.Add(ClientMapping(client));
             }
@@ -57,37 +59,37 @@ namespace Services
             return clients;
         }
 
-        public void AddClient(Client client)
+        public async Task AddClientAsync(Client client)
         {
-            var clientDb = ClientMapping(client);
+                var clientDb = ClientMapping(client);
 
-            if (_dbContext.Clients.Contains(clientDb))
-                throw new PersonAlreadyExistException("Данный клиент уже существует");
+                if (_dbContext.Clients.Contains(clientDb))
+                    throw new PersonAlreadyExistException("Данный клиент уже существует");
 
-            if (((DateTime.Now - clientDb.DateOfBirth).Days / 365) < 18)
-                throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
+                if (((DateTime.Now - clientDb.DateOfBirth).Days / 365) < 18)
+                    throw new PersonAgeValidationException("Лицам до 18 регистрация запрещена");
 
-            if (string.IsNullOrEmpty(clientDb.SeriesOfPassport))
-                throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+                if (string.IsNullOrEmpty(clientDb.SeriesOfPassport))
+                    throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
 
-            if (clientDb.NumberOfPassport == null)
-                throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+                if (clientDb.NumberOfPassport == null)
+                    throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            var newAccount = new AccountDb
-            {
-                AccountId = Guid.NewGuid(),
-                Clientid = clientDb.ClientId,
-                CurrencyCode = 643
-            };
+                var newAccount = new AccountDb
+                {
+                    AccountId = Guid.NewGuid(),
+                    Clientid = clientDb.ClientId,
+                    CurrencyCode = 643
+                };
 
-            _dbContext.Accounts.Add(newAccount);
-            _dbContext.Clients.Add(clientDb);
-            _dbContext.SaveChanges();
+                _dbContext.Accounts.Add(newAccount);
+                _dbContext.Clients.Add(clientDb);
+                await _dbContext.SaveChangesAsync();
         }
 
-        public void UpdateClient(Client client)
+        public async Task UpdateClientAsync(Client client)
         {
-            var priorClient = _dbContext.Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
+            var priorClient = await _dbContext.Clients.FirstOrDefaultAsync(c => c.ClientId == client.ClientId);
 
             if (!_dbContext.Clients.Contains(priorClient))
                 throw new PersonAlreadyExistException("Данного клиента не существует");
@@ -101,24 +103,24 @@ namespace Services
             priorClient.Accounts = ClientMapping(client).Accounts;
             priorClient.BonusDiscount = client.BonusDiscount;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void DeleteClient(Guid clientId)
+        public async Task DeleteClientAsync(Guid clientId)
         {
-            var requiredClient = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
+            var requiredClient = await _dbContext.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);
 
             if (requiredClient == null)
                 throw new PersonDoesntExistException("Указанного клиента не сущетсвует");
             else
-                _dbContext.Clients.Remove(requiredClient);
+                 _dbContext.Clients.Remove(requiredClient);
 
-            _dbContext.SaveChanges();
+           await _dbContext.SaveChangesAsync();
         }
 
-        public Account GetAccount(Guid accountId)
+        public async Task<Account> GetAccountAsync(Guid accountId)
         {
-            var account = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
+            var account = await _dbContext.Accounts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 
             if (account == null)
                 throw new AccountDoesntExistException("Указанного аккаунта не сущетсвует");
@@ -126,38 +128,38 @@ namespace Services
             return AccountMapping(account);
         }
 
-        public void AddAccount(Account account)
+        public async Task AddAccountAsync(Account account)
         {         
-            if (account.Clientid == null)
+            if (account.Clientid == Guid.Empty)
                 throw new AccountDoesntExistException("Данный аккаунт не привязан ни к одному клиенту");
 
             _dbContext.Accounts.Add(AccountMapping(account));
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void DeleteAccount(Guid accountId)
+        public async Task DeleteAccountAsync(Guid accountId)
         {
-            var account = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == accountId);
+            var account = await _dbContext.Accounts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 
             if (account == null)
                 throw new AccountDoesntExistException("Указанного аккаунта не сущетсвует");
             else
                 _dbContext.Accounts.Remove(account);
       
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void UpdateAccount(Account account)
+        public async Task UpdateAccountAsync(Account account)
         {      
-            var priorAccount = _dbContext.Accounts.FirstOrDefault(c => c.AccountId == account.AccountId);
-            var accountOwner = _dbContext.Clients.FirstOrDefault(c => c.ClientId == priorAccount.Clientid);
+            var priorAccount = await _dbContext.Accounts.FirstAsync(c => c.AccountId == account.AccountId);
+            var accountOwner = await _dbContext.Clients.FirstAsync(c => c.ClientId == priorAccount.Clientid);
 
             if (!accountOwner.Accounts.Select(x => x.Clientid).Contains(priorAccount.Clientid))
                 throw new PersonAlreadyExistException("Данного аккаунта не существует");
 
             priorAccount.Amount = account.Amount;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         private ClientDb ClientMapping(Client client)

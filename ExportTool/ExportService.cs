@@ -8,8 +8,7 @@ namespace ExportTool
 {
     public class ExportService
     {
-   
-        public void WriteClientToCsv(List<Client> clients, string pathToDirectory, string csvFileName)
+        public async Task WriteClientToCsv(List<Client> clients, string pathToDirectory, string csvFileName)
         {
             var dirInfo = new DirectoryInfo(pathToDirectory);
             if (!dirInfo.Exists)
@@ -17,63 +16,51 @@ namespace ExportTool
 
             var fullPath = Path.Combine(pathToDirectory, csvFileName);
 
-            using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
+            await using var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate);
+            await using var streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
+
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                using (var streamWriter = new StreamWriter(fileStream, Encoding.UTF8))
-                {
+                Delimiter = ";"
+            };
 
-                    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-                    {
-                        Delimiter = ";"
-                    };
+            await using var writer = new CsvWriter(streamWriter, config);
 
-                    using (var writer = new CsvWriter(streamWriter, config))
-                    {
-                        writer.WriteRecords(clients);
-                        writer.Flush();
-                    }
-                }
-            }
+            await writer.WriteRecordsAsync(clients);
+            await writer.FlushAsync();
         }
 
-        public List<Client> ReadClientFromCsv(string pathToDirectory, string csvFileName)
+        public async Task<List<Client>> ReadClientFromCsv(string pathToDirectory, string csvFileName)
         {
             var clientList = new List<Client>();
 
             string fullPath = Path.Combine(pathToDirectory, csvFileName);
 
-            using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
+            await using var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate);
+
+            using var streamReader = new StreamReader(fileStream, Encoding.UTF8);
+
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            { Delimiter = ";" };
+
+            using var reader = new CsvReader(streamReader, config);
+
+            var clientsAsync = reader.EnumerateRecordsAsync(new Client());
+
+            await foreach (var c in clientsAsync)
             {
-
-                using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                clientList.Add(new Client
                 {
-
-                    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-                    { Delimiter = ";" };
-
-                    using (var reader = new CsvReader(streamReader, config))
-                    {
-
-                        var clients = reader.EnumerateRecords(new Client());
-
-                        foreach (var c in clients)
-                        {
-                            clientList.Add(new Client
-                            {
-                                ClientId = c.ClientId,
-                                FirstName = c.FirstName,
-                                LastName = c.LastName,
-                                NumberOfPassport = c.NumberOfPassport,
-                                SeriesOfPassport = c.SeriesOfPassport,
-                                Phone = c.Phone,
-                                DateOfBirth = c.DateOfBirth.ToUniversalTime(),
-                                BonusDiscount = c.BonusDiscount,
-                            });
-                        }
-                    }
-                }
+                    ClientId = c.ClientId,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    NumberOfPassport = c.NumberOfPassport,
+                    SeriesOfPassport = c.SeriesOfPassport,
+                    Phone = c.Phone,
+                    DateOfBirth = c.DateOfBirth.ToUniversalTime(),
+                    BonusDiscount = c.BonusDiscount,
+                });
             }
-
             return clientList;
         }
     }

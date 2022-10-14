@@ -10,26 +10,25 @@ namespace Services
 {
     public class RateUpdater
     {
-
-        public Task StartAccrual(CancellationToken token, ClientService service, ClientFilter filter)
+        public async Task StartAccrualAsync(CancellationToken token, ClientService service, ClientFilter filter)
         {
-            return Task.Run(() =>
-            {
-                var clients = service.GetClients(filter);
+            var clients = await service.GetClientsAsync(filter);
 
-                while (!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
+            {
+                foreach (var client in clients)
                 {
-                    foreach (var client in clients)
+                    if (client.Accounts == null)
+                        continue;
+
+                    foreach (var account in client.Accounts)
                     {
-                        foreach (var account in client.Accounts)
-                        {
-                            account.Amount += account.Amount + 100;
-                            service.UpdateAccount(account);
-                        }
+                        account.Amount += account.Amount + 100;
+                        await service.UpdateAccountAsync(account);
                     }
-                    Task.Delay(5000).Wait();
                 }
-            });
+                Task.Delay(5000).Wait();
+            }
         }
     }
 }

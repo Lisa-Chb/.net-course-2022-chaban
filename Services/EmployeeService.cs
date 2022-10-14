@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Models;
 using ModelsDb;
 using ModelsDb.Data;
@@ -17,9 +16,9 @@ namespace Services
             _dbContext = new ApplicationContext();
         }
 
-        public Employee GetEmployee(Guid employeeId)
+        public async Task<Employee> GetEmployee(Guid employeeId)
         {
-            var employee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(c => c.EmployeeId == employeeId);
 
             if (employee == null)
                 throw new PersonDoesntExistException("Указанного сотрудника не сущетсвует");
@@ -27,45 +26,44 @@ namespace Services
             return EmployeeMapping(employee);
         }    
 
-        public void AddNewEmployee(Employee employee)
+        public async Task AddNewEmployee(Employee employee)
         {
-            var employeeDb = EmployeeMapping(employee);
+                var employeeDb = EmployeeMapping(employee);
 
-            if (_dbContext.Employees.Contains(employeeDb))
-                throw new PersonAlreadyExistException("Данный работник уже существует");
+                if (_dbContext.Employees.Contains(employeeDb))
+                    throw new PersonAlreadyExistException("Данный работник уже существует");
 
-            if ((DateTime.Now - employeeDb.DateOfBirth).Days / 365 < 18)
-                throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
+                if ((DateTime.Now - employeeDb.DateOfBirth).Days / 365 < 18)
+                    throw new PersonAgeValidationException("Лица до 18 лет не могут быть приняты на работу");
 
-            if (string.IsNullOrEmpty(employeeDb.SeriesOfPassport))
-                throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
+                if (string.IsNullOrEmpty(employeeDb.SeriesOfPassport))
+                    throw new PersonSeriesOfPassportValidationException("Необходимо ввести серию паспорта");
 
-            if (employeeDb.NumberOfPassport == null)
-                throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
+                if (employeeDb.NumberOfPassport == null)
+                    throw new PersonNumberOfPassportValidationException("Необходимо ввести номер паспорта");
 
-            if (string.IsNullOrEmpty(employeeDb.Position))
-                throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
+                if (string.IsNullOrEmpty(employeeDb.Position))
+                    throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
 
-            _dbContext.Add(employeeDb);
-
-            _dbContext.SaveChanges();
+                _dbContext.Add(employeeDb);
+                await _dbContext.SaveChangesAsync();
         }
 
-        public void DeleteEmployee(Guid employeeId)
+        public async Task DeleteEmployee(Guid employeeId)
         {
-            var requiredEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employeeId);
+            var requiredEmployee = await _dbContext.Employees.FirstOrDefaultAsync(c => c.EmployeeId == employeeId);
 
             if (requiredEmployee == null)
                 throw new PersonDoesntExistException("Указанного сотрудника не сущетсвует");
             else
                 _dbContext.Employees.Remove(requiredEmployee);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void UpdateEmployee(Employee employee)
+        public async Task UpdateEmployee(Employee employee)
         {
-            var priorEmployee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeId == employee.EmployeeId);
+            var priorEmployee = await _dbContext.Employees.FirstOrDefaultAsync(c => c.EmployeeId == employee.EmployeeId);
 
             if (!_dbContext.Employees.Contains(priorEmployee))
                 throw new PersonAlreadyExistException("Данного сотрудника не существует");
@@ -81,11 +79,11 @@ namespace Services
             priorEmployee.Contract = employee.Contract;
             priorEmployee.BonusDiscount = employee.BonusDiscount;
             
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
 
-        public List<Employee> GetEmployees(EmployeeFilter filter)
+        public async Task<List<Employee>> GetEmployees(EmployeeFilter filter)
         {
             var employeesDb = _dbContext.Employees.AsQueryable();
 
@@ -107,10 +105,12 @@ namespace Services
             if (filter.Position != null)
                 employeesDb = employeesDb.Where(x => x.Position == filter.Position);
 
-            var paginatedEmployees = employeesDb.Skip((filter.Page - 1)* filter.PageSize).Take(filter.PageSize).ToList();
+            var paginatedEmployeesQuery = employeesDb.Skip((filter.Page - 1)* filter.PageSize).Take(filter.PageSize);
+            var paginatedEmployeesData = await paginatedEmployeesQuery.ToListAsync();
 
             var employees = new List<Employee>();
-            foreach (var employee in paginatedEmployees)
+
+            foreach (var employee in paginatedEmployeesData)
             {
                 employees.Add(EmployeeMapping(employee));
             }
