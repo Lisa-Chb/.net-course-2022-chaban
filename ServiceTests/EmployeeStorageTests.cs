@@ -2,7 +2,6 @@
 using Services.Filtres;
 using Services;
 using Xunit;
-using ModelsDb;
 using Models;
 
 namespace ServiceTests

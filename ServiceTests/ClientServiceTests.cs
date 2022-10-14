@@ -15,9 +15,9 @@ namespace ServiceTests
             //Arrange
             var service = new ClientService();
 
-            TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
-            List<Client> clients = generatorClient.Generate(5);
+            var testDataGenerator = new TestDataGenerator();
+            var generatorClient = testDataGenerator.CreateClientListGenerator();
+            var clients = generatorClient.Generate(5);
 
             var client = new Client
             {
@@ -50,9 +50,9 @@ namespace ServiceTests
             //Arrange
             var service = new ClientService();
 
-            TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Client> generatorClient = testDataGenerator.CreateClientListGenerator();
-            List<Client> clients = generatorClient.Generate(5);
+            var testDataGenerator = new TestDataGenerator();
+            var generatorClient = testDataGenerator.CreateClientListGenerator();
+            var clients = generatorClient.Generate(5);
 
             var clientTom = new Client()
             {

@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using Models;
-using ModelsDb;
 using Services.Exceptions;
 using Services;
 using Xunit;
@@ -13,9 +12,9 @@ namespace ServiceTests
         public void AddGetEmployeeTest()
         {
             //Arrange
-            TestDataGenerator testDataGenerator = new TestDataGenerator();
-            Faker<Employee> generatorEmployee = testDataGenerator.CreateEmployeeListGenerator();
-            List<Employee> employees = generatorEmployee.Generate(10);
+            var testDataGenerator = new TestDataGenerator();
+            var generatorEmployee = testDataGenerator.CreateEmployeeListGenerator();
+            var employees = generatorEmployee.Generate(10);
 
             var employee = new Employee
             {

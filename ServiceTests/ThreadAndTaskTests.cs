@@ -77,14 +77,12 @@ namespace ServiceTests
             //Arrange                
             var lockObject = new Object();
 
-
             var accountTest = new Account()
             {
                 Amount = 0
             };
 
             //Act
-
             var firstThread = new Thread(() =>
             {
                 for (int i = 0; i < 10; i++)
@@ -120,7 +118,7 @@ namespace ServiceTests
             Thread.Sleep(20000);
 
             //Assert
-            Assert.Equal(accountTest.Amount, 200);
+            Assert.Equal(200, accountTest.Amount);
         }
 
         [Fact]
