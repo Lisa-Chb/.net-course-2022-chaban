@@ -82,8 +82,8 @@ namespace Services
                     CurrencyCode = 643
                 };
 
-                _dbContext.Accounts.Add(newAccount);
-                _dbContext.Clients.Add(clientDb);
+                await _dbContext.Accounts.AddAsync(newAccount);
+                await _dbContext.Clients.AddAsync(clientDb);
                 await _dbContext.SaveChangesAsync();
         }
 
@@ -133,7 +133,7 @@ namespace Services
             if (account.Clientid == Guid.Empty)
                 throw new AccountDoesntExistException("Данный аккаунт не привязан ни к одному клиенту");
 
-            _dbContext.Accounts.Add(AccountMapping(account));
+            await _dbContext.Accounts.AddAsync(AccountMapping(account));
             await _dbContext.SaveChangesAsync();
         }
 

@@ -45,7 +45,7 @@ namespace Services
                 if (string.IsNullOrEmpty(employeeDb.Position))
                     throw new EmployeePositionValidationException("Необходимо указать занимаемую должность");
 
-                _dbContext.Add(employeeDb);
+                await _dbContext.AddAsync(employeeDb);
                 await _dbContext.SaveChangesAsync();
         }
 
