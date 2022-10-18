@@ -14,7 +14,7 @@ namespace ServiceTests
     public class EmployeeServiceTest
     { 
         [Fact]
-        public void EmployeeAgeValidationExceptionTest()
+        public async Task EmployeeAgeValidationExceptionTest()
         {
             //Arrange
             var employeeWithoutAge = new Employee();
@@ -25,11 +25,11 @@ namespace ServiceTests
 
             //Act Assert
             var testEmployeeService = new EmployeeService();
-            Assert.Throws<PersonAgeValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutAge));       
+            await Assert.ThrowsAsync<PersonAgeValidationException>(async() => await testEmployeeService.AddNewEmployee(employeeWithoutAge));       
         }
 
         [Fact]
-        public void EmployeeSeriesOfPassportValidationExceptionTest()
+        public async Task EmployeeSeriesOfPassportValidationExceptionTest()
         {
             //Arrange
             var employeeWithoutSeriesOfPassort = new Employee();
@@ -39,11 +39,11 @@ namespace ServiceTests
 
             //Act Assert
             var testEmployeeService = new EmployeeService();           
-            Assert.Throws<PersonSeriesOfPassportValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutSeriesOfPassort));
+            await Assert.ThrowsAsync<PersonSeriesOfPassportValidationException>(async() => await testEmployeeService.AddNewEmployee(employeeWithoutSeriesOfPassort));
         }
 
         [Fact]
-        public void EmployeeNumberOfPassportValidationExceptionTest()
+        public async Task EmployeeNumberOfPassportValidationExceptionTest()
         {
             //Arrange
             var employeeWithoutNumberOfPassort = new Employee();
@@ -53,11 +53,11 @@ namespace ServiceTests
 
             //Act Assert
             var testEmployeeService = new EmployeeService();
-            Assert.Throws<PersonNumberOfPassportValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutNumberOfPassort));
+            await Assert.ThrowsAsync<PersonNumberOfPassportValidationException>(async() => await testEmployeeService.AddNewEmployee(employeeWithoutNumberOfPassort));
         }
 
         [Fact]
-        public void EmployeePositionValidationExceptionTest()
+        public async Task EmployeePositionValidationExceptionTest()
         {
             //Arrange
             var employeeWithoutPosition = new Employee();
@@ -67,7 +67,7 @@ namespace ServiceTests
 
             //Act Assert
             var testEmployeeService = new EmployeeService();
-            Assert.Throws<EmployeePositionValidationException>(() => testEmployeeService.AddNewEmployee(employeeWithoutPosition));
+            await Assert.ThrowsAsync<EmployeePositionValidationException>(async() => await testEmployeeService.AddNewEmployee(employeeWithoutPosition));
         }      
     }
 }

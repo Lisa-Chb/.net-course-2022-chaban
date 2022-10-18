@@ -17,7 +17,7 @@ namespace ServiceTests
         }
 
         [Fact]
-        public void RateUpdaterTest()
+        public async Task RateUpdaterTest()
         {
             var cancellationtTokenSource = new CancellationTokenSource();
             var token = cancellationtTokenSource.Token;
@@ -26,15 +26,21 @@ namespace ServiceTests
             var filter = new ClientFilter() { PageSize = 100 };
 
             var rateUpdater = new RateUpdater();
-            rateUpdater.StartAccrual(token, service, filter).Wait(20000);
+            Task.Run(() => rateUpdater.StartAccrualAsync(token, service, filter));
 
+            await Task.Delay(10000);
             cancellationtTokenSource.Cancel();
         }
 
         [Fact]
-        public void CaschDispenserTest()
+        public async Task CaschDispenserTest()
         {
-            //Arrange
+            //Arrange         
+            ThreadPool.SetMaxThreads(10, 10);
+            ThreadPool.GetAvailableThreads(out var completition, out var cp);
+            _output.WriteLine(completition.ToString());
+            _output.WriteLine(cp.ToString());
+
             var dicpenser = new CashDispenserService();
 
             var testDataGenerator = new TestDataGenerator();
@@ -46,28 +52,26 @@ namespace ServiceTests
             
             foreach (Client client in clients)
             {
-                service.AddClient(client);
+                await service.AddClientAsync(client);
                 var account = new Account() { AccountId = Guid.NewGuid(), Amount = 250, Clientid = client.ClientId, CurrencyCode = 840 };
                 accounts.Add(account);
-                service.AddAccount(account);
+                await service.AddAccountAsync(account);
             }
 
             //Act
-            var taskCollection = new List<Task>();
-
             for (int i = 0; i <= 9; i++)
             {
-                taskCollection.Add(dicpenser.CashingOut(accounts[i].AccountId));             
+                await dicpenser.CashingOut(accounts[i].AccountId);
+                ThreadPool.GetAvailableThreads(out var a, out var b);
+
+                _output.WriteLine($"{a}");
             }
 
-            foreach(var task in taskCollection)
-            {
-               task.Wait();
-            }
+            await Task.Delay(1000);
 
             //Assert
             var serviseToGetAccount = new ClientService();
-            var testAccount = serviseToGetAccount.GetAccount(accounts.FirstOrDefault().AccountId);
+            var testAccount = await serviseToGetAccount.GetAccountAsync(accounts.FirstOrDefault().AccountId);
             Assert.Equal(testAccount.Amount, 150);
         }
 
@@ -77,14 +81,12 @@ namespace ServiceTests
             //Arrange                
             var lockObject = new Object();
 
-
             var accountTest = new Account()
             {
                 Amount = 0
             };
 
             //Act
-
             var firstThread = new Thread(() =>
             {
                 for (int i = 0; i < 10; i++)
@@ -120,11 +122,11 @@ namespace ServiceTests
             Thread.Sleep(20000);
 
             //Assert
-            Assert.Equal(accountTest.Amount, 200);
+            Assert.Equal(200, accountTest.Amount);
         }
 
         [Fact]
-        public void AddandReadClientTest()
+        public async Task AddandReadClientTest()
         {
             //Arrange
             //очищаю файлы перед работой, чтобы не добавлять в базу уже сущестующих клиентов после предыдущих тестов
@@ -157,27 +159,26 @@ namespace ServiceTests
             };
 
             clients.Add(clientTest);
-            exportService.WriteClientToCsv(clients, pathToDirectory, "ClientImport.csv");
+            await exportService.WriteClientToCsv(clients, pathToDirectory, "ClientImport.csv");
 
             //Act
-            var exportThread = new Thread(() =>
+            var exportThread = new Thread(async () =>
             {
-                var exportClients = clientService.GetClients(filter);
-                exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
+                var exportClients =  await clientServiceExportThread.GetClientsAsync(filter);
+                await exportService.WriteClientToCsv(exportClients, pathToDirectory, "ClientExport.csv");
                 Thread.Sleep(1000);
             });
 
-            var importThread = new Thread(() =>
+            var importThread = new Thread(async () =>
             {
-                var importClients = exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
+                var importClients = await exportService.ReadClientFromCsv(pathToDirectory, "ClientImport.csv");
 
                 foreach (Client c in importClients)
                 {
-                    clientServiceImportThread.AddClient(c);
+                   await clientServiceImportThread.AddClientAsync(c);
 
                     Thread.Sleep(100);
                 }
-
             });
 
             exportThread.Start();
@@ -185,8 +186,8 @@ namespace ServiceTests
             Thread.Sleep(20000);
 
             //Assert                  
-            Assert.NotNull(clientServiceImportThread.GetClient(clientTest.ClientId));
-            Assert.NotEmpty(exportService.ReadClientFromCsv(pathToDirectory, "ClientExport.csv"));
+            Assert.NotNull(await clientServiceImportThread.GetClientAsync(clientTest.ClientId));
+            Assert.NotEmpty(await exportService.ReadClientFromCsv(pathToDirectory, "ClientExport.csv"));
         }
     }
 }

@@ -8,8 +8,7 @@ namespace ServiceTests
     public class ClientFilterTest
     {
         [Fact]
-
-        public void SelectClientWithNameTest()
+        public async Task SelectClientWithNameTest()
         {
             //Arrange
             var testClientService = new ClientService();
@@ -22,7 +21,7 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientJohn);
+            await testClientService.AddClientAsync(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.ClientId = Guid.NewGuid();
@@ -32,7 +31,7 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientJohnToo);
+            await testClientService.AddClientAsync(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.ClientId = Guid.NewGuid();
@@ -42,14 +41,14 @@ namespace ServiceTests
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 2367;
             clientEmily.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientEmily);
+            await testClientService.AddClientAsync(clientEmily);
 
             var filter = new ClientFilter();
             filter.FirstName = "John";
             filter.PageSize = 10;
 
             //Act
-            var clients = testClientService.GetClients(filter);
+            var clients = await testClientService.GetClientsAsync(filter);
 
             //Assert
             Assert.DoesNotContain(clientEmily, clients);
@@ -57,8 +56,7 @@ namespace ServiceTests
 
 
         [Fact]
-
-        public void SelectClientWithNumberOfPassportTest()
+        public async Task SelectClientWithNumberOfPassportTest()
         {
             //Arrange
             var testClientService = new ClientService();
@@ -71,7 +69,7 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientJohn);
+            await testClientService.AddClientAsync(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.ClientId = Guid.NewGuid();
@@ -81,7 +79,7 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(1999, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientJohnToo);
+            await testClientService.AddClientAsync(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.ClientId = Guid.NewGuid();
@@ -91,22 +89,21 @@ namespace ServiceTests
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 6865;
             clientEmily.DateOfBirth = new DateTime(1998, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientEmily);
+            await testClientService.AddClientAsync(clientEmily);
 
             var filter = new ClientFilter();
             filter.NumberOfPassport = 2367;
             filter.PageSize = 10;
 
             //Act 
-            var clients = testClientService.GetClients(filter);
+            var clients = await testClientService.GetClientsAsync(filter);
 
             //Assert
             Assert.DoesNotContain(clientEmily, clients);
         }
 
         [Fact]
-
-        public void SelectClientWithDateRangeTest()
+        public async Task SelectClientWithDateRangeTest()
         {
             //Arrange
             var testClientService = new ClientService();
@@ -119,7 +116,7 @@ namespace ServiceTests
             clientJohn.SeriesOfPassport = "PR -56";
             clientJohn.NumberOfPassport = 2367;
             clientJohn.DateOfBirth = new DateTime(2000, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientJohn);
+            await testClientService.AddClientAsync(clientJohn);
 
             var clientJohnToo = new Client();
             clientJohnToo.ClientId = Guid.NewGuid();
@@ -129,7 +126,7 @@ namespace ServiceTests
             clientJohnToo.SeriesOfPassport = "PR -96";
             clientJohnToo.NumberOfPassport = 2367;
             clientJohnToo.DateOfBirth = new DateTime(1978, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientJohnToo);
+            await testClientService.AddClientAsync(clientJohnToo);
 
             var clientEmily = new Client();
             clientEmily.ClientId = Guid.NewGuid();
@@ -139,7 +136,7 @@ namespace ServiceTests
             clientEmily.SeriesOfPassport = "PR -56";
             clientEmily.NumberOfPassport = 2367;
             clientEmily.DateOfBirth = new DateTime(1954, 5, 6).ToUniversalTime();
-            testClientService.AddClient(clientEmily);
+            await testClientService.AddClientAsync(clientEmily);
 
             var filter = new ClientFilter();
             filter.MinDateTime = new DateTime(1950, 1, 1).ToUniversalTime();
@@ -147,7 +144,7 @@ namespace ServiceTests
             filter.PageSize = 10;
 
             //Act 
-            var clients = testClientService.GetClients(filter);
+            var clients = await testClientService.GetClientsAsync(filter);
 
             //Assert
             Assert.DoesNotContain(clientJohn, clients);
@@ -295,7 +292,6 @@ namespace ServiceTests
 
                     //Assert
                     Assert.Equal(expectedAge, 45);
-
                 }
         */      
     }
