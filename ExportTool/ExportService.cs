@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using Models;
+using Newtonsoft.Json;
 using System.Globalization;
 using System.Text;
 
@@ -8,6 +9,27 @@ namespace ExportTool
 {
     public class ExportService
     {
+        public Task WriteSerializePersonToCsv<T>(T persons, string pathToDirectory, string csvFileName)
+        {
+            var dirInfo = new DirectoryInfo(pathToDirectory);
+            if (!dirInfo.Exists)
+                dirInfo.Create();
+
+            var fullPath = Path.Combine(pathToDirectory, csvFileName);
+
+            string jsonPerson = JsonConvert.SerializeObject(persons);
+            File.WriteAllText(fullPath, jsonPerson);
+            return Task.CompletedTask;
+        }
+
+        public Task<T> ReadSerializePersonFromCsv<T>(string pathToDirectory, string csvFileName)
+        {
+            var fullPath = Path.Combine(pathToDirectory, csvFileName);
+
+            string jsonPerson = File.ReadAllText(fullPath);
+            var persons = JsonConvert.DeserializeObject<T>(jsonPerson);
+            return Task.FromResult(persons);
+        }
         public async Task WriteClientToCsv(List<Client> clients, string pathToDirectory, string csvFileName)
         {
             var dirInfo = new DirectoryInfo(pathToDirectory);
